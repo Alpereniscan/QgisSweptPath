@@ -96,7 +96,7 @@ class Simulator(QObject):
             self.storePath.emit()
             t = Thread(target=self._simulate_step, args=())
             t.start()
-            
+
         else:
             self.iface.messageBar().pushMessage(
                 "Can't start simulation",
@@ -146,53 +146,96 @@ class Simulator(QObject):
         if self._prop.simulation_mode == SimulationMode.STEP_BASED:
             self.vehicle.steer_left(self._prop.steer_change_step)
 
-
     def _simulate_frame(self):
         if self._simulation_paused or self._canvas.isDrawing():
             # Skip simulation if simulation is paused or canvas is drawing
             return
 
         if self._speed_up:
-            self._vehicle.speed_up(self._time_between_steps * self._prop.acceleration)
+            self._vehicle.speed_up(
+                self._time_between_steps * self._prop.acceleration
+            )
 
         if self._speed_down:
-            self._vehicle.speed_down(self._time_between_steps * self._prop.acceleration)
+            self._vehicle.speed_down(
+                self._time_between_steps * self._prop.acceleration
+            )
 
         if self._steer_right:
-            self._vehicle.steer_right(self._vehicle.max_steering_angle / self._frames_half_steering)
+            self._vehicle.steer_right(
+                self._vehicle.max_steering_angle /
+                self._frames_half_steering
+            )
 
-        if self._steer_left:
-            self._vehicle.steer_left(self._vehicle.max_steering_angle / self._frames_half_steering)
+        elif self._steer_left:
+            self._vehicle.steer_left(
+                self._vehicle.max_steering_angle /
+                self._frames_half_steering
+            )
 
-        drive_distance = float(self._time_between_steps * self._vehicle.speed)
-        if self._vehicle.speed > self._prop.minimum_speed:
+        else:
+            # Automatically return steering toward centre
+            steering_return = (
+                    self._vehicle.max_steering_angle /
+                    self._frames_half_steering
+            )
+
+            if self._vehicle.steering_angle > 0:
+                self._vehicle.steer_right(
+                    min(steering_return, self._vehicle.steering_angle)
+                )
+
+            elif self._vehicle.steering_angle < 0:
+                self._vehicle.steer_left(
+                    min(steering_return, abs(self._vehicle.steering_angle))
+                )
+        drive_distance = (
+                self._time_between_steps * self._vehicle.speed
+        )
+
+        # Use absolute speed for the movement threshold.
+        # Keep drive_distance signed so negative speed reverses the vehicle.
+        if abs(self._vehicle.speed) > self._prop.minimum_speed:
             self._vehicle.step(drive_distance)
 
-            self._distance_counter += drive_distance
+            # Path printing must count travelled distance regardless of direction.
+            self._distance_counter += abs(drive_distance)
+
             if self._distance_counter >= self._prop.print_distance:
                 self._distance_counter = 0.0
                 self.storePath.emit()
 
         self.drawVehicle.emit()
 
-
     def _simulate_step(self):
         while self._simulation_running:
             if self._simulation_paused or self._canvas.isDrawing():
-                # Skip simulation if simulation is paused or canvas is drawing
+                # Prevent the loop from consuming a CPU core while waiting.
+                time.sleep(0.01)
                 continue
 
-            if self._vehicle.speed > self._prop.minimum_speed:
-                self._vehicle.step(self._prop.step_distance)
+            if abs(self._vehicle.speed) > self._prop.minimum_speed:
+                # Apply the speed sign to the configured step distance.
+                direction = 1.0 if self._vehicle.speed > 0.0 else -1.0
+                drive_distance = self._prop.step_distance * direction
+
+                self._vehicle.step(drive_distance)
 
                 self._step_counter += 1
-                if self._step_counter == self._prop.print_interval:
+
+                if self._step_counter >= self._prop.print_interval:
                     self._step_counter = 0
                     self.storePath.emit()
 
                 self.drawVehicle.emit()
-                time.sleep(self._prop.step_distance / self.vehicle.speed)
 
+                # Sleep duration must always be positive.
+                time.sleep(
+                    self._prop.step_distance / abs(self._vehicle.speed)
+                )
+            else:
+                # Avoid a busy loop while the vehicle is stationary.
+                time.sleep(0.01)
 
     @property
     def simulation_running(self) -> bool:
