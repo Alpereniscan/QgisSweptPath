@@ -103,6 +103,9 @@ class Simulator(QObject):
         self._speed_down: bool = False
         self._brake: bool = False
         self._center_steering: bool = False
+        # Automatically return steering toward centre when no steering key is pressed.
+        # Switched by the "Auto-center steering" check box (see setAutoSteer).
+        self._auto_steer: bool = not self.STEER_HOLD_ON_RELEASE
 
         # Frames the current steering key has been held (for ramp-up)
         self._steer_hold_frames: int = 0
@@ -214,6 +217,10 @@ class Simulator(QObject):
     def pauseResumeSimulation(self) -> bool:
         self._simulation_paused = not self._simulation_paused
         return self._simulation_paused
+
+    def setAutoSteer(self, enabled: bool):
+        """Enable or disable the automatic return of the steering toward centre."""
+        self._auto_steer = bool(enabled)
 
     def speedUp(self):
         if self._prop.simulation_mode == SimulationMode.STEP_BASED:
@@ -509,7 +516,7 @@ class Simulator(QObject):
 
         if self._center_steering:
             rate = base_step
-        elif not self.STEER_HOLD_ON_RELEASE:
+        elif self._auto_steer:
             # AUTO STEERING: return toward centre
             rate = base_step * self.STEER_RETURN_FACTOR
         else:

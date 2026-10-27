@@ -138,6 +138,9 @@ class QgisSweptPath:
             self.dockwidget.chbPathLayer.clicked.connect(self._check_create_path_layer)
             self.dockwidget.cmboVehicleSelect.currentIndexChanged.connect(self._reset_vehicle)
             self.dockwidget.btnPauseResumeSimulation.clicked.connect(self._pause_resume_simulation)
+            # Auto-center steering option. Apply the initial state of the check box to the simulator
+            self.dockwidget.chbAutoSteer.toggled.connect(self.simulator.setAutoSteer)
+            self.simulator.setAutoSteer(self.dockwidget.chbAutoSteer.isChecked())
 
 
 
@@ -1153,6 +1156,10 @@ class QgisSweptPath:
         Hide all the not needed buttons during simulation
         """
         self.dockwidget.btnShowProperties.setEnabled(False)
+        # TODO: The auto-center steering option is locked during the simulation, because changing it
+        #  while the simulation is running causes erratic steering. Develop this further to allow
+        #  changing the option during the simulation.
+        self.dockwidget.chbAutoSteer.setEnabled(False)
         self.dockwidget.btnAddVehicleLayer.setEnabled(False)
         self.dockwidget.btnAddPathLayer.setEnabled(False)
         self.dockwidget.btnCreateVehicle.setEnabled(False)
@@ -1170,6 +1177,7 @@ class QgisSweptPath:
         Shows all buttons after the simulation has stopped
         """
         self.dockwidget.btnShowProperties.setEnabled(True)
+        self.dockwidget.chbAutoSteer.setEnabled(True)
         self.dockwidget.btnAddVehicleLayer.setEnabled(True)
         self.dockwidget.btnAddPathLayer.setEnabled(True)
         self.dockwidget.btnCreateVehicle.setEnabled(True)
