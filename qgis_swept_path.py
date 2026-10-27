@@ -28,6 +28,8 @@ from qgis.PyQt.QtWidgets import QAction, QMessageBox, QPushButton
 from qgis.core import QgsGeometry, QgsField, QgsPointXY, QgsFeature, QgsVectorLayer, Qgis, QgsProject, QgsVectorFileWriter, QgsRectangle
 from qgis.gui import QgsGui, QgsVectorLayerSaveAsDialog
 from uuid import uuid4
+from qgis.PyQt.QtWidgets import QAction
+from .route_tool import RouteTool
 
 # Import the code for the DockWidget
 from .qgis_swept_path_dockwidget_base import QgisSweptPathDockWidgetBase
@@ -89,6 +91,10 @@ class QgisSweptPath:
         # Map canvas extent. Used for automatic map movement.
         self._map_extent: QgsRectangle = self.canvas.extent()
 
+        # Route drawing
+        self._route_tool: RouteTool = RouteTool(self.canvas)
+        self._route_tool.routeFinished.connect(self._on_route_drawn)
+        self._route_tool.routeCancelled.connect(self._on_route_cancelled)
 
     def run(self):
         """Run method that loads and starts the plugin"""
@@ -127,9 +133,14 @@ class QgisSweptPath:
             self.dockwidget.cmboVehicleSelect.currentIndexChanged.connect(self._reset_vehicle)
             self.dockwidget.btnPauseResumeSimulation.clicked.connect(self._pause_resume_simulation)
 
+
+
+            # Signals from simulator
+            #self.simulator.drawVehicle.connect(self._draw_vehicle)
+            # self.simulator.storePath will be connected on start simulation only if print path is set to true
             # Signals from simulator
             self.simulator.drawVehicle.connect(self._draw_vehicle)
-            # self.simulator.storePath will be connected on start simulation only if print path is set to true
+            self.simulator.routeEnded.connect(self._on_route_ended)
 
             # Signals from properties
             self.prop.vehicleLayerChanged.connect(self.setupVehicleLayer)
@@ -149,6 +160,53 @@ class QgisSweptPath:
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
+    def _draw_route(self):
+        if self.simulator is None:
+            return
+        if self.vehicle is None or not self.vehicle.is_placed:
+            self.iface.messageBar().pushMessage(
+                "Draw route", "The vehicle must first be created and placed.",
+                level=Qgis.Warning, duration=4)
+            return
+        if self.prop.simulation_mode != SimulationMode.FRAME_BASED:
+            self.iface.messageBar().pushMessage(
+                "Draw route", "Route following needs the frame based simulation mode.",
+                level=Qgis.Warning, duration=4)
+            return
+        self.canvas.setMapTool(self._route_tool)
+
+    def _restore_tool(self):
+        # Same approach the plugin already uses after placing the vehicle
+        self.iface.actionPan().trigger()
+
+    def _on_route_drawn(self, points):
+        self._restore_tool()
+        if self.simulator is None:
+            return
+
+        # setRoute needs the vehicle and properties before the simulation starts
+        self.simulator.vehicle = self.vehicle
+        self.simulator.properties = self.prop
+
+        if not self.simulator.setRoute(points):
+            return
+
+        if not self.simulator.simulation_running:
+            self.startSimulation()
+            if not self.simulator.simulation_running:
+                # Start failed (no path layer etc.), so drop the armed route
+                self.simulator.cancelRoute()
+                return
+
+        self.canvas.setFocus(Qt.OtherFocusReason)
+
+    def _on_route_cancelled(self):
+        self._restore_tool()
+
+    def _on_route_ended(self, completed: bool):
+        self._route_tool.reset()
+        if completed and self.simulator is not None and self.simulator.simulation_running:
+            self.stopSimulation()
 
     def setupControls(self):
         """Adds all actions for the controls"""
@@ -189,7 +247,13 @@ class QgisSweptPath:
                         icon_path=":/plugins/qgis_swept_path/icon/pause_resume.png",
                         parent=self.iface.mainWindow(),
                         shortcut="Ctrl+Shift+O")
-
+        self.add_action("Draw route",
+                        self._draw_route,
+                        add_to_menu=True,
+                        add_to_toolbar=True,
+                        icon_path=":/plugins/qgis_swept_path/icon.png",
+                        parent=self.iface.mainWindow(),
+                        shortcut="Ctrl+Shift+R")
     def setupLayers(self):
         """
         Method is called on plugin start.
@@ -302,10 +366,10 @@ class QgisSweptPath:
                 self._path_points.append(PathPoints(v, v.vehicle_name, v_type, "body", "rwlb"))
                 self._path_points.append(PathPoints(v, v.vehicle_name, v_type, "body", "rwrb"))
 
-
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
         icon_path = ":/plugins/qgis_swept_path/icon.png"
+
         self.start_plugin_action = self.add_action(
             text="QgisSweptPath",
             callback=self.run,
