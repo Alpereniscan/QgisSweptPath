@@ -1,0 +1,193 @@
+<svg
+    width="45.00"
+    height="18.55"
+    viewBox="0 0 45.00 18.55"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <style>
+        .body {
+            stroke-width: 0.6;
+            stroke: black;
+            fill: white;
+        }
+
+        .window {
+            stroke-width: 0.35;
+            stroke: black;
+            fill: #d9e4e8;
+        }
+
+        .detail {
+            stroke-width: 0.3;
+            stroke: #555555;
+            fill: none;
+        }
+
+        .wheel {
+            fill: black;
+        }
+    </style>
+
+
+    <!-- VEHICLE BODY -->
+    <g>
+        <!-- Main Caddy body -->
+        <path
+            class="body"
+            d="
+                M 1.0,2.0
+                Q 1.0,1.0 2.2,0.8
+                L 39.2,0.8
+                Q 42.0,1.1 43.6,3.7
+                Q 44.4,5.2 44.5,7.1
+                L 44.5,11.45
+                Q 44.4,13.35 43.6,14.85
+                Q 42.0,17.45 39.2,17.75
+                L 2.2,17.75
+                Q 1.0,17.55 1.0,16.55
+                Z"
+        />
+
+        <!-- Windshield -->
+        <path
+            class="window"
+            d="
+                M 37.2,2.1
+                L 40.0,2.4
+                Q 42.0,2.8 42.9,4.5
+                L 42.9,7.3
+                L 37.2,7.3
+                Z"
+        />
+
+        <path
+            class="window"
+            d="
+                M 37.2,11.25
+                L 42.9,11.25
+                L 42.9,14.05
+                Q 42.0,15.75 40.0,16.15
+                L 37.2,16.45
+                Z"
+        />
+
+        <!-- Cab / cargo separation -->
+        <line
+            class="detail"
+            x1="34.0"
+            y1="1.2"
+            x2="34.0"
+            y2="17.35"
+        />
+
+        <!-- Rear door separation -->
+        <line
+            class="detail"
+            x1="3.0"
+            y1="1.2"
+            x2="3.0"
+            y2="17.35"
+        />
+
+        <!-- Vehicle centre line -->
+        <line
+            class="detail"
+            x1="3.0"
+            y1="9.275"
+            x2="43.5"
+            y2="9.275"
+            opacity="0.25"
+        />
+    </g>
+
+
+    <!-- FRONT AXLE
+         Real position = 0.890 m from front
+         SVG position = 36.10
+    -->
+
+    <g transform="translate(36.10 4.0)">
+        <!-- Left front wheel -->
+        <rect
+            id="left_wheel"
+            class="wheel"
+            x="-2.5"
+            y="-3.5"
+            width="5.0"
+            height="1.8"
+            rx="0.7"
+            transform="param(wheel_angle)"
+        />
+
+        <circle
+            id="left_pivot"
+            cx="0"
+            cy="0"
+            r="0.35"
+            fill="black"
+        />
+    </g>
+
+
+    <g transform="translate(36.10 14.55)">
+        <!-- Right front wheel -->
+        <rect
+            id="right_wheel"
+            class="wheel"
+            x="-2.5"
+            y="1.7"
+            width="5.0"
+            height="1.8"
+            rx="0.7"
+            transform="param(wheel_angle)"
+        />
+
+        <circle
+            id="right_pivot"
+            cx="0"
+            cy="0"
+            r="0.35"
+            fill="black"
+        />
+    </g>
+
+
+    <!-- REAR AXLE
+         Wheelbase = 2.755 m
+         Rear axle position = 3.645 m from front
+         SVG position = 8.55
+    -->
+
+    <g transform="translate(8.55 9.275)">
+
+        <rect
+            id="left_rear_wheel"
+            class="wheel"
+            x="-2.5"
+            y="-8.775"
+            width="5.0"
+            height="1.8"
+            rx="0.7"
+        />
+
+        <rect
+            id="right_rear_wheel"
+            class="wheel"
+            x="-2.5"
+            y="6.975"
+            width="5.0"
+            height="1.8"
+            rx="0.7"
+        />
+
+        <circle
+            id="rear_axle_center_point"
+            cx="0"
+            cy="0"
+            r="0.35"
+            fill="black"
+        />
+
+    </g>
+
+</svg>
