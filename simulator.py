@@ -46,7 +46,10 @@ class Simulator(QObject):
         self._steer_left: bool = False
         self._speed_up: bool = False
         self._speed_down: bool = False
-
+        # Automatically return steering toward centre when no steering key is pressed
+        # TODO: Allow changing this during a running simulation. The plugin currently
+        #  locks the checkbox while the simulation is running.
+        self._auto_steer: bool = True
 
     def eventFilter(self, caller: QObject, event: QEvent):
         if event.type() == QEvent.KeyPress:
@@ -173,7 +176,7 @@ class Simulator(QObject):
                 self._frames_half_steering
             )
 
-        else:
+        elif self._auto_steer:
             # Automatically return steering toward centre
             steering_return = (
                     self._vehicle.max_steering_angle /
@@ -189,6 +192,7 @@ class Simulator(QObject):
                 self._vehicle.steer_left(
                     min(steering_return, abs(self._vehicle.steering_angle))
                 )
+
         drive_distance = (
                 self._time_between_steps * self._vehicle.speed
         )
@@ -266,4 +270,10 @@ class Simulator(QObject):
     def vehicle(self, v: Vehicle):
         self._vehicle = v
 
+    @property
+    def auto_steer(self) -> bool:
+        return self._auto_steer
 
+
+    def setAutoSteer(self, enabled: bool):
+        self._auto_steer = bool(enabled)
