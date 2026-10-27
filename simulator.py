@@ -14,7 +14,7 @@ from qgis.utils import iface
 from .qgis_swept_path_dockwidget_prop import QgisSweptPathDockWidgetProp
 from .vehicle import Vehicle
 from .qgis_swept_path_enum import SimulationMode
-from .route_follow import Geom, Pilot, Tuning
+from .route_follow import Geom, Pilot, Tuning, read_articulation
 
 
 class Simulator(QObject):
@@ -51,7 +51,7 @@ class Simulator(QObject):
 
     # ------------------------------------------------------------------
     # Route following (units = map units; speed is map units / s)
-    # Path shape / steering / failure tuning lives in route_follow.Tuning
+    # Path shape / steering / failure / trailer tuning lives in route_follow.Tuning
     # ------------------------------------------------------------------
     # True = the wheel jumps straight to the angle the route needs (stop-start assumption,
     # like Autodesk Vehicle Tracking). False = it turns at the normal steering speed.
@@ -61,6 +61,8 @@ class Simulator(QObject):
     # Speed along the route (overridden by prop.route_speed / prop.route_reverse_speed if they exist)
     ROUTE_CRUISE_SPEED: float = 3.0
     ROUTE_REVERSE_SPEED: float = 1.5
+    # Reverse speed with a trailer (slower: the trailer reacts with a delay)
+    ROUTE_REVERSE_SPEED_TRAILER: float = 1.0
     # Never slow below this while on the route (so the vehicle does not stall)
     ROUTE_MIN_SPEED: float = 0.5
     # Standstill time at a cusp (direction change), seconds
@@ -69,6 +71,8 @@ class Simulator(QObject):
     ROUTE_MANUAL_OVERRIDE: bool = True
     # No progress along the route for this long (seconds) = route not possible
     ROUTE_STALL_TIME: float = 8.0
+    # Show the detected trailer geometry when a route starts
+    ROUTE_SHOW_TRAILER_INFO: bool = True
 
     def __init__(self, canvas: QgsMapCanvas):
         """Constructor"""
@@ -282,11 +286,16 @@ class Simulator(QObject):
 
         self._geom = Geom.from_vehicle(self._vehicle)
         self._pilot = Pilot(self._geom, runs, Tuning())
-        self._pilot.start(*pose)
+        self._pilot.start(pose[0], pose[1], pose[2], self._read_trailer())
         self._wait_frames = 0
         self._stall_frames = 0
         self._stall_ref = (-1, -1.0)
         self._route_active = True
+
+        if self._geom.trailer is not None and self.ROUTE_SHOW_TRAILER_INFO:
+            msg = "Trailer detected: " + self._geom.trailer.describe()
+            print("QgisSweptPath: " + msg)
+            iface.messageBar().pushMessage("Route", msg, level=Qgis.Info, duration=5)
         return True
 
     def _clear_route(self):
@@ -338,6 +347,25 @@ class Simulator(QObject):
             )
             return None
 
+    def _read_trailer(self):
+        """
+        (trailer axle x, y, trailer heading, tractor rear axle x, y) of the attached trailer,
+        or None if the vehicle has no (readable) trailer.
+        """
+        if self._geom is None or self._geom.trailer is None:
+            return None
+        try:
+            st = read_articulation(self._vehicle, self._geom)
+            if st is None:
+                return None
+            tg = self._geom.trailer
+            R, th1, T, th2 = st["R"], st["th1"], st["T"], st["th2"]
+            if T is None:
+                T = tg.axle_from(R[0], R[1], th1, th2)
+            return T[0], T[1], th2, R[0], R[1]
+        except Exception:
+            return None
+
     def _set_steering(self, target_rad: float):
         """Steer to an absolute angle (radians). Instant unless ROUTE_STEER_INSTANT is False."""
         v = self._vehicle
@@ -364,7 +392,7 @@ class Simulator(QObject):
 
         v = self._vehicle
         dt = self._time_between_steps
-        cmd = self._pilot.update(*pose)
+        cmd = self._pilot.update(pose[0], pose[1], pose[2], self._read_trailer())
 
         if cmd.status == "done":
             self._finish_route()
@@ -387,6 +415,8 @@ class Simulator(QObject):
 
         if cmd.direction < 0:
             cruise = getattr(self._prop, "route_reverse_speed", self.ROUTE_REVERSE_SPEED)
+            if cmd.with_trailer:
+                cruise = min(cruise, self.ROUTE_REVERSE_SPEED_TRAILER)
         else:
             cruise = getattr(self._prop, "route_speed", self.ROUTE_CRUISE_SPEED)
 

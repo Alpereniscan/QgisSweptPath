@@ -8,7 +8,7 @@ from qgis.core import Qgis, QgsPointXY, QgsGeometry, QgsWkbTypes
 from qgis.gui import QgsMapTool, QgsMapCanvas, QgsRubberBand
 from qgis.utils import iface
 
-from .route_follow import Geom, simulate
+from .route_follow import Geom, simulate, read_articulation
 
 FORWARD = 1
 REVERSE = -1
@@ -27,8 +27,8 @@ class RouteTool(QgsMapTool):
     really steer, forward and in reverse (same controller as the real run):
 
       orange line  : path of the FRONT axle (forward parts)
-      blue line    : path of the REAR axle (reverse parts)
-      shaded area  : swept area, its edge = the outer lines of the vehicle body
+      blue line    : path of the REAR axle (reverse parts); with a trailer: the TRAILER's rear axle
+      shaded area  : swept area, its edge = the outer lines of the vehicle body (and trailer)
       outlines     : the vehicle at the start, at every direction change and at the end
       red          : the vehicle can't follow the route from here
       grey dashed  : the points you clicked
@@ -187,8 +187,17 @@ class RouteTool(QgsMapTool):
             self._draw_guide(raw, None)
             return
 
+        # Trailer: pick up what the real run has learned about the hitch, and the current angle
+        th2 = None
+        tg = self._geom.trailer
+        if tg is not None:
+            tg.sync()
+            st = read_articulation(v, self._geom)
+            if st is not None:
+                th2 = st["th2"]
+
         sim_runs = [{"dir": d, "pts": pts} for d, pts in raw if pts]
-        res = simulate(self._geom, fx, fy, th, sim_runs, step=self.PREVIEW_STEP)
+        res = simulate(self._geom, fx, fy, th, sim_runs, step=self.PREVIEW_STEP, th2=th2)
         self._result = res
 
         self._draw_guide(raw, (fx, fy, th))
@@ -199,10 +208,14 @@ class RouteTool(QgsMapTool):
 
         status = iface.mainWindow().statusBar()
         name = "REVERSE" if self.direction == REVERSE else "FORWARD"
+        text = "Route direction: " + name
+        if tg is not None and res.samples:
+            text += "  |  max trailer angle {:.0f} deg (limit {:.0f})".format(
+                math.degrees(res.max_beta), math.degrees(tg.limit))
         if res.fail_index is not None:
             status.showMessage("Route not possible from the red part: " + res.fail_reason)
         else:
-            status.showMessage("Route direction: " + name)
+            status.showMessage(text)
 
     def _draw_guide(self, raw, start):
         part = 0
@@ -217,20 +230,26 @@ class RouteTool(QgsMapTool):
         if part:
             self._band_guide.show()
 
-    def _draw_paths(self, res):
+    def _tracked(self, rx, ry, th, th2, d):
+        """The point that follows the drawn line: front axle forward, rear axle (trailer axle) in reverse."""
         g = self._geom
+        if d > 0:
+            return g.front_from_rear(rx, ry, th)
+        if g.trailer is not None:
+            return g.trailer.axle_from(rx, ry, th, th2)
+        return (rx, ry)
+
+    def _draw_paths(self, res):
         parts = {FORWARD: [], REVERSE: []}
         current = None
         cur_dir = None
-        for (rx, ry, th, _delta, d, _seg) in res.samples[: res.fail_index if res.fail_index is not None else None]:
+        end = res.fail_index if res.fail_index is not None else None
+        for (rx, ry, th, _delta, d, _seg, th2) in res.samples[:end]:
             if cur_dir != d or current is None:
                 current = []
                 parts[d].append(current)
                 cur_dir = d
-            if d > 0:
-                current.append(g.front_from_rear(rx, ry, th))   # forward: front axle path
-            else:
-                current.append((rx, ry))                        # reverse: rear axle path
+            current.append(self._tracked(rx, ry, th, th2, d))
         for d, band in ((FORWARD, self._band_fwd), (REVERSE, self._band_rev)):
             idx = 0
             for pts in parts[d]:
@@ -240,10 +259,18 @@ class RouteTool(QgsMapTool):
             if idx:
                 band.show()
 
+    def _bodies(self, rx, ry, th, th2):
+        """Outlines of the tractor and, if present, the trailer."""
+        g = self._geom
+        out = [g.outline(rx, ry, th)]
+        if g.trailer is not None:
+            out.append(g.trailer_outline(rx, ry, th, th2))
+        return out
+
     def _draw_envelope(self, res, fine=False):
         """Swept area of the vehicle body; its edge shows the outer lines of the vehicle."""
-        g = self._geom
-        samples = res.samples[: res.fail_index if res.fail_index is not None else None]
+        end = res.fail_index if res.fail_index is not None else None
+        samples = res.samples[:end]
         if not samples:
             return
         step = self.ENVELOPE_STEP_FINE if fine else self.ENVELOPE_STEP
@@ -254,10 +281,11 @@ class RouteTool(QgsMapTool):
             picks.append(samples[-1])
 
         polys = []
-        for (rx, ry, th, _d, _dir, _seg) in picks:
-            ring = [QgsPointXY(x, y) for x, y in g.outline(rx, ry, th)]
-            ring.append(ring[0])
-            polys.append(QgsGeometry.fromPolygonXY([ring]))
+        for (rx, ry, th, _d, _dir, _seg, th2) in picks:
+            for body in self._bodies(rx, ry, th, th2):
+                ring = [QgsPointXY(x, y) for x, y in body]
+                ring.append(ring[0])
+                polys.append(QgsGeometry.fromPolygonXY([ring]))
 
         union = None
         try:
@@ -283,28 +311,26 @@ class RouteTool(QgsMapTool):
         self._band_envelope.show()
 
     def _draw_ghosts(self, res):
-        g = self._geom
         idx = 0
-        for (rx, ry, th) in res.ghosts:
-            self._add_part(self._band_ghost, g.outline(rx, ry, th), idx)
-            idx += 1
+        for (rx, ry, th, th2) in res.ghosts:
+            for body in self._bodies(rx, ry, th, th2):
+                self._add_part(self._band_ghost, body, idx)
+                idx += 1
         if idx:
             self._band_ghost.show()
 
     def _draw_failure(self, res):
         if res.fail_index is None or not res.samples:
             return
-        g = self._geom
         # The last stretch before the failure, as a red line, and the vehicle where it gave up
         tail = res.samples[max(0, res.fail_index - 40): res.fail_index]
-        pts = []
-        for (rx, ry, th, _d, d, _seg) in tail:
-            pts.append(g.front_from_rear(rx, ry, th) if d > 0 else (rx, ry))
+        pts = [self._tracked(rx, ry, th, th2, d) for (rx, ry, th, _dl, d, _seg, th2) in tail]
         if len(pts) >= 2:
             self._add_part(self._band_fail, pts, 0)
             self._band_fail.show()
         last = res.samples[min(res.fail_index, len(res.samples)) - 1]
-        self._add_part(self._band_fail_ghost, g.outline(last[0], last[1], last[2]), 0)
+        for i, body in enumerate(self._bodies(last[0], last[1], last[2], last[6])):
+            self._add_part(self._band_fail_ghost, body, i)
         self._band_fail_ghost.show()
 
     # ------------------------------------------------------------------
