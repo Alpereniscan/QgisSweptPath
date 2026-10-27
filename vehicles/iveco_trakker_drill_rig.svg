@@ -1,0 +1,146 @@
+<svg
+    width="82.10"
+    height="25.00"
+    viewBox="0 0 82.10 25.00"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Truck-mounted drilling rig on Iveco Trakker 6x6 (AD450), top view, mast stowed.
+         Scale 10 units = 1 m. Front of vehicle = right.
+         Sources: IVECO Trakker 6x6 AD450 spec sheet (L 8210, WB 4520, AF 2250, tyres 385/65R22.5 front, 315/80R22.5 rear,
+         tandem 1390 mm); JK Drilling truck-mounted rig data sheet (width 2.5 m, length 8.20 m);
+         IVECO AT380T38 6x6 sheet (front track 1981 mm, front overhang 1440 mm).
+         Layout follows CME truck rig practice (underbody tool boxes 71 in both sides, rod rack on deck, rear and front
+         hydraulic jacks). Equipment positions are illustrative, not manufacturer dimensions. -->
+    <style>
+        .body   { stroke-width: 1;   stroke: black; fill: white; }
+        .wheel  { fill: black; }
+        .panel  { stroke: black; stroke-width: 0.3; fill: white; }
+        .steel  { stroke: black; stroke-width: 0.35; fill: #eceff1; }
+        .mast   { stroke: black; stroke-width: 0.4; fill: #fdd835; }
+        .truss  { stroke: black; stroke-width: 0.25; fill: none; }
+        .head   { stroke: black; stroke-width: 0.4; fill: #455a64; }
+        .tank   { stroke: black; stroke-width: 0.35; fill: #cfd8dc; }
+        .pipe   { stroke: black; stroke-width: 0.3; fill: #b0bec5; }
+        .glass  { stroke: black; stroke-width: 0.3; fill: #cfd8dc; }
+        .light  { stroke: black; stroke-width: 0.3; fill: #f5f5f5; }
+        .tail   { stroke: black; stroke-width: 0.3; fill: #c62828; }
+        .jack   { stroke: black; stroke-width: 0.35; fill: #ffb300; }
+        .dark   { fill: #333333; }
+        .line   { stroke: black; stroke-width: 0.25; fill: none; }
+    </style>
+
+    <g>
+    <!-- vehicle body outline (origin top left): full-width rig deck + 2.28 m day cab -->
+    <path
+        class="body"
+        d="M 1.5 0.5 H 64.6 V 1.2 H 77 Q 81.6 1.2 81.6 5.5 V 19.5 Q 81.6 23.8 77 23.8 H 64.6 V 24.5 H 1.5 Q 0.5 24.5 0.5 23.5 V 1.5 Q 0.5 0.5 1.5 0.5 Z"
+    />
+
+    <!-- rear under-run bar and tail lights -->
+    <rect class="steel" x="0.5" y="3.5" width="1.0" height="18" rx="0.4" />
+    <rect class="tail" x="0.7" y="1.0" width="1.2" height="2.0" rx="0.4" />
+    <rect class="tail" x="0.7" y="22.0" width="1.2" height="2.0" rx="0.4" />
+
+    <!-- rear hydraulic levelling jacks (stowed) -->
+    <rect class="jack" x="3.0" y="1.3" width="3.2" height="3.0" rx="0.5" />
+    <rect class="jack" x="3.0" y="20.7" width="3.2" height="3.0" rx="0.5" />
+
+    <!-- drill floor / driller's platform behind the mast base -->
+    <rect class="steel" x="2.2" y="5.6" width="9.5" height="13.8" rx="0.6" />
+    <path class="line" d="M 3.6 5.6 V 19.4 M 5.0 5.6 V 19.4 M 6.4 5.6 V 19.4 M 7.8 5.6 V 19.4 M 9.2 5.6 V 19.4" />
+
+    <!-- underbody tool boxes (1.8 m = 71 in), both sides -->
+    <rect class="steel" x="34.0" y="1.3" width="18.0" height="3.3" rx="0.5" />
+    <rect class="steel" x="34.0" y="20.4" width="18.0" height="3.3" rx="0.5" />
+    <path class="line" d="M 40.0 1.3 V 4.6 M 46.0 1.3 V 4.6 M 40.0 20.4 V 23.7 M 46.0 20.4 V 23.7" />
+
+    <!-- rod rack on deck, helper side: 3 m rods -->
+    <rect class="panel" x="33.5" y="5.4" width="31.0" height="3.6" rx="0.5" />
+    <rect class="pipe" x="34.5" y="5.9" width="29.5" height="0.9" rx="0.45" />
+    <rect class="pipe" x="34.5" y="7.0" width="29.5" height="0.9" rx="0.45" />
+    <rect class="pipe" x="34.5" y="8.1" width="29.5" height="0.7" rx="0.35" />
+
+    <!-- mud tank and hydraulic power pack behind the cab -->
+    <rect class="tank" x="34.0" y="15.8" width="15.5" height="4.0" rx="0.8" />
+    <path class="line" d="M 41.75 15.8 V 19.8" />
+    <rect class="panel" x="51.0" y="15.8" width="13.0" height="4.0" rx="0.8" />
+    <circle class="line" cx="57.5" cy="17.8" r="1.5" />
+    <path class="line" d="M 57.5 16.3 V 19.3 M 56.0 17.8 H 59.0" />
+
+    <!-- day cab: roof, windscreen, mirrors, grille and lights -->
+    <rect class="panel" x="65.4" y="2.0" width="15.6" height="21.0" rx="2.2" />
+    <rect class="steel" x="66.6" y="3.4" width="9.0" height="18.2" rx="1.6" />
+    <polygon class="glass" points="76.6,3.8 80.0,5.2 80.0,19.8 76.6,21.2" />
+    <rect class="dark" x="72.4" y="0.2" width="2.3" height="1.1" rx="0.5" />
+    <rect class="dark" x="72.4" y="23.7" width="2.3" height="1.1" rx="0.5" />
+    <rect class="steel" x="81.1" y="2.6" width="1.0" height="19.8" rx="0.4" />
+    <path class="light" d="M 78.8 1.6 Q 81.2 1.9 81.6 4.6 L 78.6 4.4 Z" />
+    <path class="light" d="M 78.8 23.4 Q 81.2 23.1 81.6 20.4 L 78.6 20.6 Z" />
+
+    <!-- mast stowed along centre line: truss, cross members, rotary head, crown over cab, cab-roof cradle -->
+    <rect class="mast" x="12.0" y="10.2" width="60.0" height="4.6" rx="0.8" />
+    <path class="truss" d="M 14 10.2 L 17 14.8 L 20 10.2 L 23 14.8 L 26 10.2 L 29 14.8 L 32 10.2 L 35 14.8 L 38 10.2 L 41 14.8 L 44 10.2 L 47 14.8 L 50 10.2 L 53 14.8 L 56 10.2 L 59 14.8 L 62 10.2 L 65 14.8 L 68 10.2 L 71 14.8" />
+    <path class="line" d="M 12.0 12.5 H 72.0" />
+    <rect class="head" x="14.5" y="9.4" width="6.5" height="6.2" rx="0.8" />
+    <circle class="line" cx="17.75" cy="12.5" r="1.6" fill="white" />
+    <rect class="steel" x="71.0" y="9.6" width="3.6" height="5.8" rx="0.8" />
+    <rect class="steel" x="64.5" y="9.6" width="2.2" height="5.8" rx="0.5" />
+    </g>
+
+    <g transform="translate(67.7 2.595)">
+    <!-- left front wheel (origin left pivot) -->
+    <rect
+        id="left_wheel"
+        class="wheel"
+        x="-5.36"
+        y="-1.925"
+        width="10.72"
+        height="3.85"
+        rx="1"
+        transform="param(wheel_angle)"
+    />
+    <circle
+        id="left_pivot"
+        cx="0"
+        cy="0"
+        r="0.5"
+        fill="black"
+    />
+    </g>
+
+    <g transform="translate(67.7 22.405)">
+    <!-- right front wheel (origin right pivot)-->
+    <rect
+        id="right_wheel"
+        class="wheel"
+        x="-5.36"
+        y="-1.925"
+        width="10.72"
+        height="3.85"
+        rx="1"
+        transform="param(wheel_angle)"
+    />
+    <circle
+        id="right_pivot"
+        cx="0"
+        cy="0"
+        r="0.5"
+        fill="black"
+    />
+    </g>
+
+    <g transform="translate(22.5 12.5)">
+    <!-- rear tandem wheels (origin = effective rear axle = tandem centre, axles at -6.95 and +6.95 units) -->
+        <rect id="left_rear_wheel_1"  class="wheel" x="-12.33" y="-11.48" width="10.76" height="3.15" rx="1" />
+        <rect id="left_rear_wheel_2"  class="wheel" x="1.57"   y="-11.48" width="10.76" height="3.15" rx="1" />
+        <rect id="right_rear_wheel_1" class="wheel" x="-12.33" y="8.33"   width="10.76" height="3.15" rx="1" />
+        <rect id="right_rear_wheel_2" class="wheel" x="1.57"   y="8.33"   width="10.76" height="3.15" rx="1" />
+        <circle
+            id="rear_axle_center_point"
+            cx="0"
+            cy="0"
+            r="0.5"
+            fill="black"
+        />
+    </g>
+</svg>
