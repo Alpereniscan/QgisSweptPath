@@ -30,6 +30,7 @@ from qgis.gui import QgsGui, QgsVectorLayerSaveAsDialog
 from uuid import uuid4
 from qgis.PyQt.QtWidgets import QAction
 from .route_tool import RouteTool
+from .route_follow import capture_vehicle_state, apply_vehicle_state
 
 # Import the code for the DockWidget
 from .qgis_swept_path_dockwidget_base import QgisSweptPathDockWidgetBase
@@ -92,9 +93,14 @@ class QgisSweptPath:
         self._map_extent: QgsRectangle = self.canvas.extent()
 
         # Route drawing
-        self._route_tool: RouteTool = RouteTool(self.canvas)
+        self._route_tool = RouteTool(self.canvas, lambda: self.vehicle)
         self._route_tool.routeFinished.connect(self._on_route_drawn)
         self._route_tool.routeCancelled.connect(self._on_route_cancelled)
+
+        # Undo: one entry per simulation run
+        self._undo_stack: list = []
+        self._undo_pending: dict = None
+        self.UNDO_LIMIT: int = 20
 
     def run(self):
         """Run method that loads and starts the plugin"""
@@ -141,6 +147,7 @@ class QgisSweptPath:
             # Signals from simulator
             self.simulator.drawVehicle.connect(self._draw_vehicle)
             self.simulator.routeEnded.connect(self._on_route_ended)
+            self.simulator.routeFailed.connect(self._on_route_failed)
 
             # Signals from properties
             self.prop.vehicleLayerChanged.connect(self.setupVehicleLayer)
@@ -254,6 +261,17 @@ class QgisSweptPath:
                         icon_path=":/plugins/qgis_swept_path/icon.png",
                         parent=self.iface.mainWindow(),
                         shortcut="Ctrl+Shift+R")
+
+
+        self.add_action("Undo last run",
+                        self.undo_last_run,
+                        add_to_menu=True,
+                        add_to_toolbar=True,
+                        icon_path=":/plugins/qgis_swept_path/icon.png",
+                        parent=self.iface.mainWindow(),
+                        shortcut="Ctrl+Shift+Z")
+
+
     def setupLayers(self):
         """
         Method is called on plugin start.
@@ -535,14 +553,19 @@ class QgisSweptPath:
 
     def stopSimulation(self):
         self.simulator.stopSimulation()
-
         if self.prop.simulation_mode == SimulationMode.FRAME_BASED:
             self.canvas.removeEventFilter(self.simulator)
         if self.prop.auto_map_movement:
             self.canvas.extentsChanged.disconnect(self._update_map_extent)
+
+        feature_ids = []
+        path_layer_id = None
         if self.prop.print_path:
             self.simulator.storePath.disconnect(self._store_path_points)
-            self._write_path_to_layer()
+            feature_ids = self._write_path_to_layer()
+            path_layer_id = self._path_layer.id()
+
+        self._commit_undo_entry(path_layer_id, feature_ids)
 
         # Reset bending angle monitoring for all vehicle parts
         for v in self.vehicle.vehicle_parts:
@@ -554,11 +577,9 @@ class QgisSweptPath:
         self.dockwidget.btnPauseResumeSimulation.setText("PAUSE")
         self.dockwidget.btnPauseResumeSimulation.setEnabled(False)
 
-
-
     def startSimulation(self):
         if (self.dockwidget.txtSimulationId.text() is None
-                or len(str(self.dockwidget.txtSimulationId.text()).strip()) < 1)\
+            or len(str(self.dockwidget.txtSimulationId.text()).strip()) < 1) \
                 or self._simulation_id == str(self.dockwidget.txtSimulationId.text()).strip():
             self._simulation_id = str(uuid4())
             self.dockwidget.txtSimulationId.setText(self._simulation_id)
@@ -599,6 +620,8 @@ class QgisSweptPath:
             if self.prop.auto_map_movement:
                 self.canvas.extentsChanged.connect(self._update_map_extent)
                 self._update_map_extent()
+
+            self._begin_undo_entry()
             self.simulator.startSimulation()
             self.canvas.setFocus(Qt.OtherFocusReason)
 
@@ -725,6 +748,7 @@ class QgisSweptPath:
         # Method is called, when the VehiclePlacer is finish
         self.canvas.unsetMapTool(self._vehicle_placer)
         self.iface.actionPan().trigger()
+        self._undo_stack.clear()
         self._create_vehicle_drawing()
         self.dockwidget.chbPlaceVehicle.setChecked(True)
 
@@ -783,8 +807,9 @@ class QgisSweptPath:
             p.add_point(getattr(p.vehicle, p.vehicle_part))
 
 
-    def _write_path_to_layer(self):
-        # Write the stored points as lines to the layer
+    def _write_path_to_layer(self) -> list:
+        # Write the stored points as lines to the layer; returns the new feature ids
+        feature_ids = []
         for p in self._path_points:
             feature = QgsFeature(self._path_layer.fields())
             feature["simulation_id"] = self._simulation_id
@@ -793,12 +818,104 @@ class QgisSweptPath:
             feature["vehicle_part_type"] = p.vehicle_part_type
             feature["vehicle_part"] = p.vehicle_part
             feature.setGeometry(QgsGeometry.fromPolylineXY(p.get_list_as_qgs_points()))
-            self._path_layer.dataProvider().addFeatures([feature])
-
+            ok, added = self._path_layer.dataProvider().addFeatures([feature])
+            if ok:
+                feature_ids.extend(f.id() for f in added)
         self._path_layer.reload()
         self._path_layer.triggerRepaint()
+        return feature_ids
+    def _begin_undo_entry(self):
+        # Snapshot taken just before a run starts
+        self._undo_pending = {
+            "vehicle": self.vehicle,
+            "state": capture_vehicle_state(self.vehicle),
+            "simulation_id": self._simulation_id,
+            "path_layer_id": None,
+            "feature_ids": [],
+        }
 
+    def _commit_undo_entry(self, path_layer_id, feature_ids):
+        entry = self._undo_pending
+        self._undo_pending = None
+        if entry is None:
+            return
+        entry["path_layer_id"] = path_layer_id
+        entry["feature_ids"] = list(feature_ids)
+        self._undo_stack.append(entry)
+        del self._undo_stack[:-self.UNDO_LIMIT]
 
+    def undo_last_run(self):
+        """Undo the last run: delete its swept path and put the vehicle back where it started."""
+        if self.simulator is not None and self.simulator.simulation_running:
+            self.stopSimulation()  # discard the run in progress
+
+        bar = self.iface.messageBar()
+        if not self._undo_stack:
+            bar.pushMessage("Undo", "Nothing to undo.", level=Qgis.Info, duration=3)
+            return
+
+        entry = self._undo_stack.pop()
+        if entry["vehicle"] is not self.vehicle:
+            self._undo_stack.clear()
+            bar.pushMessage("Undo", "The vehicle has changed since that run, nothing to undo.",
+                            level=Qgis.Info, duration=4)
+            return
+
+        # 1. Remove the swept path written by that run
+        removed = 0
+        layer = self.proj.mapLayer(entry["path_layer_id"]) if entry["path_layer_id"] else None
+        if layer is not None:
+            ids = list(entry["feature_ids"])
+            if not ids and entry["simulation_id"]:
+                ids = [f.id() for f in layer.getFeatures()
+                       if f["simulation_id"] == entry["simulation_id"]]
+            if ids and layer.dataProvider().deleteFeatures(ids):
+                removed = len(ids)
+                layer.reload()
+                layer.triggerRepaint()
+
+        # 2. Put the vehicle back
+        ok, details = apply_vehicle_state(entry["state"])
+
+        self._vehicle_features.clear()
+        try:
+            self._create_vehicle_drawing()
+        except (AttributeError, RuntimeError):
+            bar.pushMessage("Undo", "Vehicle layer is not available, so the vehicle was not redrawn.",
+                            level=Qgis.Warning, duration=5)
+        self.update_speed()
+        self.update_steering()
+
+        if ok:
+            bar.pushMessage("Undo", "Last run undone ({} path features removed).".format(removed),
+                            level=Qgis.Success, duration=3)
+        else:
+            print("QgisSweptPath undo: " + details)
+            bar.pushMessage("Undo",
+                            "Swept path removed, but the vehicle position could not be fully restored. "
+                            + details,
+                            level=Qgis.Warning, duration=0)
+
+    def _on_route_failed(self, reason: str):
+        # The simulator stopped the vehicle because the route can't be driven
+        self._route_tool.reset()
+        if self.simulator is not None and self.simulator.simulation_running:
+            self.stopSimulation()
+
+        bar = self.iface.messageBar()
+        widget = bar.createMessage("Route not possible", reason)
+        button = QPushButton(widget)
+        button.setText("Undo run")
+        widget.layout().addWidget(button)
+        item = bar.pushWidget(widget, Qgis.Warning, 0)
+        button.clicked.connect(lambda _checked=False: self._undo_from_message(item))
+
+    def _undo_from_message(self, item):
+        self.undo_last_run()
+        try:
+            self.iface.messageBar().popWidget(item)
+        except Exception:
+            pass
     def _create_vehicle_layer(self):
         """
         Create a new in memory vector layer to show the vehicle during simulation

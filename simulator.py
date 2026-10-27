@@ -2,7 +2,6 @@
 import math
 import time
 
-from bisect import bisect_left
 from threading import Thread
 from typing import Optional
 
@@ -15,6 +14,7 @@ from qgis.utils import iface
 from .qgis_swept_path_dockwidget_prop import QgisSweptPathDockWidgetProp
 from .vehicle import Vehicle
 from .qgis_swept_path_enum import SimulationMode
+from .route_follow import Geom, Pilot, Tuning
 
 
 class Simulator(QObject):
@@ -23,6 +23,8 @@ class Simulator(QObject):
     storePath: pyqtSignal = pyqtSignal(name="storePath")
     # Emitted when route following ends. True = reached the end, False = cancelled.
     routeEnded: pyqtSignal = pyqtSignal(bool, name="routeEnded")
+    # Emitted when the route turns out to be impossible to drive. Argument = reason.
+    routeFailed: pyqtSignal = pyqtSignal(str, name="routeFailed")
 
     # ------------------------------------------------------------------
     # Manual control tuning
@@ -48,43 +50,25 @@ class Simulator(QObject):
     DEFAULT_KEY_CENTER: str = "C"
 
     # ------------------------------------------------------------------
-    # Route following tuning (units = map units; speed is map units / s)
+    # Route following (units = map units; speed is map units / s)
+    # Path shape / steering / failure tuning lives in route_follow.Tuning
     # ------------------------------------------------------------------
-    # Speed along the route (overridden by prop.route_speed if it exists)
+    # True = the wheel jumps straight to the angle the route needs (stop-start assumption,
+    # like Autodesk Vehicle Tracking). False = it turns at the normal steering speed.
+    ROUTE_STEER_INSTANT: bool = True
+    # Steering speed in route mode when ROUTE_STEER_INSTANT is False
+    ROUTE_STEER_RATE: float = 1.0
+    # Speed along the route (overridden by prop.route_speed / prop.route_reverse_speed if they exist)
     ROUTE_CRUISE_SPEED: float = 3.0
+    ROUTE_REVERSE_SPEED: float = 1.5
     # Never slow below this while on the route (so the vehicle does not stall)
     ROUTE_MIN_SPEED: float = 0.5
-    # Max lateral acceleration used to slow down for curves
-    ROUTE_MAX_LAT_ACCEL: float = 1.5
-    # Lookahead distance = MIN + GAIN * |speed|, clamped to MAX
-    ROUTE_LOOKAHEAD_MIN: float = 2.0
-    ROUTE_LOOKAHEAD_GAIN: float = 0.8
-    ROUTE_LOOKAHEAD_MAX: float = 12.0
-    # Route is considered finished when this close to the end
-    ROUTE_END_TOLERANCE: float = 0.4
-    # Route resampling spacing and corner smoothing (Chaikin iterations, 0 = off)
-    ROUTE_SPACING: float = 0.25
-    ROUTE_SMOOTHING_ITERATIONS: int = 2
-    # Steering actuator speed in route mode, relative to normal steering speed
-    ROUTE_STEER_RATE: float = 1.0
+    # Standstill time at a cusp (direction change), seconds
+    ROUTE_CUSP_PAUSE: float = 0.6
     # Pressing a steer / speed key during a route hands control back to you
     ROUTE_MANUAL_OVERRIDE: bool = True
-    # How many route points ahead of the current one are searched for progress
-    ROUTE_SEARCH_WINDOW: int = 200
-
-    # ------------------------------------------------------------------
-    # Vehicle conventions used by route following. Adjust to match vehicle.py
-    # ------------------------------------------------------------------
-    # "math_rad"    : radians, counter-clockwise from +X (east)
-    # "math_deg"    : degrees, counter-clockwise from +X
-    # "azimuth_deg" : degrees, clockwise from north
-    # "azimuth_rad" : radians, clockwise from north
-    HEADING_CONVENTION: str = "math_rad"
-    # None = auto (max_steering_angle > 1.6 means degrees), or True / False
-    #STEERING_IN_DEGREES: Optional[bool] = None
-    STEERING_IN_DEGREES: Optional[bool] = False
-    # Used only if the vehicle has no readable wheelbase attribute
-    ROUTE_WHEELBASE_FALLBACK: float = 3.0
+    # No progress along the route for this long (seconds) = route not possible
+    ROUTE_STALL_TIME: float = 8.0
 
     def __init__(self, canvas: QgsMapCanvas):
         """Constructor"""
@@ -121,11 +105,11 @@ class Simulator(QObject):
 
         # Route following state
         self._route_active: bool = False
-        self._route_pts: list = []
-        self._route_s: list = []
-        self._route_length: float = 0.0
-        self._route_end_dir: tuple = (1.0, 0.0)
-        self._route_idx: int = 0
+        self._pilot: Pilot = None
+        self._geom: Geom = None
+        self._wait_frames: int = 0
+        self._stall_frames: int = 0
+        self._stall_ref: tuple = (-1, -1.0)
 
     # ------------------------------------------------------------------
     # Key handling
@@ -251,146 +235,101 @@ class Simulator(QObject):
         return self._route_active
 
     @staticmethod
-    def _chaikin(pts: list, iterations: int) -> list:
-        """Corner cutting; endpoints are kept."""
-        for _ in range(iterations):
-            if len(pts) < 3:
-                break
-            new = [pts[0]]
-            for (x0, y0), (x1, y1) in zip(pts[:-1], pts[1:]):
-                new.append((0.75 * x0 + 0.25 * x1, 0.75 * y0 + 0.25 * y1))
-                new.append((0.25 * x0 + 0.75 * x1, 0.25 * y0 + 0.75 * y1))
-            new.append(pts[-1])
-            pts = new
-        return pts
-
-    @staticmethod
-    def _resample(pts: list, spacing: float) -> list:
-        """Resample a polyline at a fixed spacing (last point is kept)."""
-        seg = [math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(pts[:-1], pts[1:])]
-        total = sum(seg)
-        if total <= 0.0:
-            return []
-
-        out = [pts[0]]
-        i = 0
-        acc = 0.0
-        s = spacing
-        while s < total:
-            while i < len(seg) - 1 and acc + seg[i] < s:
-                acc += seg[i]
-                i += 1
-            t = (s - acc) / seg[i] if seg[i] > 0.0 else 0.0
-            a, b = pts[i], pts[i + 1]
-            out.append((a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])))
-            s += spacing
-        out.append(pts[-1])
-        return out
-
-    def setRoute(self, points) -> bool:
+    def _normalize_runs(route) -> list:
         """
-        Arm route following with a hand-drawn route.
-
-        points: list of QgsPointXY or (x, y) tuples in map units.
-        Returns True if the route was accepted. If the simulation is already
-        running the vehicle starts following immediately; otherwise it starts
-        as soon as the simulation starts.
+        route: [(points, direction), ...] from the route tool (direction 1 = forward,
+        -1 = reverse; points are QgsPointXY or (x, y) and do NOT include the start),
+        or a plain list of points (one forward run).
         """
-        raw = []
-        for p in points:
-            if callable(getattr(p, "x", None)):
-                xy = (float(p.x()), float(p.y()))
-            else:
-                xy = (float(p[0]), float(p[1]))
-            if not raw or math.hypot(xy[0] - raw[-1][0], xy[1] - raw[-1][1]) > 1e-9:
-                raw.append(xy)
+        route = list(route)
+        if (route and isinstance(route[0], (tuple, list)) and len(route[0]) == 2
+                and isinstance(route[0][0], (tuple, list))):
+            raw_runs = [(pts, d) for pts, d in route]
+        else:
+            raw_runs = [(route, 1)]
 
-        if len(raw) < 2:
+        runs = []
+        for pts_in, direction in raw_runs:
+            pts = []
+            for p in pts_in:
+                if callable(getattr(p, "x", None)):
+                    xy = (float(p.x()), float(p.y()))
+                else:
+                    xy = (float(p[0]), float(p[1]))
+                if not pts or math.hypot(xy[0] - pts[-1][0], xy[1] - pts[-1][1]) > 1e-9:
+                    pts.append(xy)
+            if pts:
+                runs.append({"dir": -1 if direction < 0 else 1, "pts": pts})
+        return runs
+
+    def setRoute(self, route) -> bool:
+        """
+        Arm route following with a hand-drawn route. Returns True if the route was accepted.
+        If the simulation is already running the vehicle starts following immediately;
+        otherwise it starts as soon as the simulation starts.
+        """
+        runs = self._normalize_runs(route)
+        if not runs or self._vehicle is None:
             iface.messageBar().pushMessage(
-                "Route", "A route needs at least two different points",
+                "Route", "A route needs at least one point",
                 level=Qgis.Warning, duration=5
             )
             return False
 
-        pts = self._chaikin(raw, self.ROUTE_SMOOTHING_ITERATIONS)
-        pts = self._resample(pts, self.ROUTE_SPACING)
-        if len(pts) < 2:
+        pose = self._read_pose()
+        if pose is None:
             return False
 
-        s = [0.0]
-        for a, b in zip(pts[:-1], pts[1:]):
-            s.append(s[-1] + math.hypot(b[0] - a[0], b[1] - a[1]))
-
-        # Direction of the last segment (used to extrapolate the lookahead target)
-        ex, ey = pts[-1][0] - pts[-2][0], pts[-1][1] - pts[-2][1]
-        el = math.hypot(ex, ey) or 1.0
-
-        self._route_pts = pts
-        self._route_s = s
-        self._route_length = s[-1]
-        self._route_end_dir = (ex / el, ey / el)
-        self._route_idx = 0
-
-        # Start from the route point closest to the vehicle
-        pose = self._read_pose() if self._vehicle is not None else None
-        if pose is not None:
-            x, y, _h, _l = pose
-            self._route_idx = min(
-                range(len(pts)),
-                key=lambda i: (pts[i][0] - x) ** 2 + (pts[i][1] - y) ** 2
-            )
-
+        self._geom = Geom.from_vehicle(self._vehicle)
+        self._pilot = Pilot(self._geom, runs, Tuning())
+        self._pilot.start(*pose)
+        self._wait_frames = 0
+        self._stall_frames = 0
+        self._stall_ref = (-1, -1.0)
         self._route_active = True
         return True
+
+    def _clear_route(self):
+        self._route_active = False
+        self._pilot = None
+        self._wait_frames = 0
 
     def cancelRoute(self):
         """Stop following the route (no-op if no route is active)."""
         if not self._route_active:
             return
-        self._route_active = False
-        self._route_pts = []
-        self._route_s = []
+        self._clear_route()
         self.routeEnded.emit(False)
 
-    def _finish_route(self):
-        # Bring the vehicle to a standstill
+    def _stop_vehicle(self):
+        """Bring the vehicle to a standstill immediately."""
         v = self._vehicle
         if v.speed > 0.0:
             v.speed_down(v.speed)
         elif v.speed < 0.0:
             v.speed_up(-v.speed)
 
-        self._route_active = False
-        self._route_pts = []
-        self._route_s = []
+    def _finish_route(self):
+        self._stop_vehicle()
+        self._clear_route()
         self.routeEnded.emit(True)
 
-    # ------------------------------------------------------------------
-    # Route following helpers
-    # ------------------------------------------------------------------
-    @staticmethod
-    def _attr(obj, names):
-        """Return the first existing attribute (property or no-arg method) from names."""
-        for name in names:
-            if not hasattr(obj, name):
-                continue
-            val = getattr(obj, name)
-            if callable(val):
-                try:
-                    val = val()
-                except TypeError:
-                    continue
-            if val is not None:
-                return val
-        return None
+    def _fail_route(self, reason: str):
+        self._stop_vehicle()
+        self._clear_route()
+        self.routeFailed.emit(reason)
 
+    # ------------------------------------------------------------------
+    # Route following
+    # ------------------------------------------------------------------
     def _read_pose(self):
-        """Return (x, y, heading_rad_math, wheelbase) of the vehicle, or None."""
+        """
+        Return (front_x, front_y, heading) of the vehicle: vehicle.f.x, vehicle.f.y, vehicle.a
+        (radians, counter-clockwise from +X), or None.
+        """
         v = self._vehicle
         try:
-            x = float(v.f.x)
-            y = float(v.f.y)
-            h = float(v.a)  # radians, counter-clockwise from +X
+            return float(v.f.x), float(v.f.y), float(v.a)
         except (AttributeError, TypeError, ValueError):
             iface.messageBar().pushMessage(
                 "Route following",
@@ -399,106 +338,91 @@ class Simulator(QObject):
             )
             return None
 
-        wheelbase = self._attr(v, ("wheelbase", "wheel_base", "axle_distance", "length_wheelbase"))
-        wheelbase = float(wheelbase) if wheelbase else self.ROUTE_WHEELBASE_FALLBACK
+    def _set_steering(self, target_rad: float):
+        """Steer to an absolute angle (radians). Instant unless ROUTE_STEER_INSTANT is False."""
+        v = self._vehicle
+        unit = self._geom.steer_unit
+        max_units = v.max_steering_angle
+        target = max(-max_units, min(max_units, target_rad / unit))
+        diff = target - v.steering_angle
 
-        return x, y, h, wheelbase
+        if not self.ROUTE_STEER_INSTANT:
+            step = (max_units / self._frames_half_steering) * self.ROUTE_STEER_RATE
+            diff = max(-step, min(step, diff))
 
-    def _steering_in_degrees(self) -> bool:
-        if self.STEERING_IN_DEGREES is not None:
-            return self.STEERING_IN_DEGREES
-        return self._vehicle.max_steering_angle > 1.6
-
-    @staticmethod
-    def _wrap_pi(a: float) -> float:
-        return (a + math.pi) % (2.0 * math.pi) - math.pi
+        if diff > 0.0:
+            v.steer_left(diff)
+        elif diff < 0.0:
+            v.steer_right(-diff)
 
     def _update_route_control(self):
         pose = self._read_pose()
         if pose is None:
-            self._route_active = False
+            self._clear_route()
             self.routeEnded.emit(False)
             return
 
-        x, y, heading, wheelbase = pose
         v = self._vehicle
-        pts = self._route_pts
-        s = self._route_s
-        n = len(pts)
+        dt = self._time_between_steps
+        cmd = self._pilot.update(*pose)
 
-        # --- progress along the route (monotonic, local search) -------------
-        hi = min(n, self._route_idx + self.ROUTE_SEARCH_WINDOW)
-        best = self._route_idx
-        best_d2 = float("inf")
-        for i in range(self._route_idx, hi):
-            d2 = (pts[i][0] - x) ** 2 + (pts[i][1] - y) ** 2
-            if d2 < best_d2:
-                best, best_d2 = i, d2
-        self._route_idx = best
-
-        remaining = self._route_length - s[best]
-        if remaining <= self.ROUTE_END_TOLERANCE:
+        if cmd.status == "done":
             self._finish_route()
             return
+        if cmd.status == "fail":
+            self._fail_route(cmd.reason)
+            return
+        if cmd.status == "cusp":
+            # Stop, and keep the wheel turning to the angle needed for the next run
+            self._stop_vehicle()
+            self._wait_frames = max(1, int(round(self.ROUTE_CUSP_PAUSE / dt)))
 
-        # --- pure pursuit steering -------------------------------------------
-        lookahead = min(
-            self.ROUTE_LOOKAHEAD_MAX,
-            self.ROUTE_LOOKAHEAD_MIN + self.ROUTE_LOOKAHEAD_GAIN * abs(v.speed)
-        )
-        target_s = s[best] + lookahead
-        if target_s >= self._route_length:
-            over = target_s - self._route_length
-            tx = pts[-1][0] + self._route_end_dir[0] * over
-            ty = pts[-1][1] + self._route_end_dir[1] * over
-        else:
-            j = min(bisect_left(s, target_s), n - 1)
-            tx, ty = pts[j]
-
-        dx, dy = tx - x, ty - y
-        dist = max(math.hypot(dx, dy), 1e-6)
-        alpha = self._wrap_pi(math.atan2(dy, dx) - heading)
-
-        in_deg = self._steering_in_degrees()
-        units_per_rad = math.degrees(1.0) if in_deg else 1.0
-        max_steer = v.max_steering_angle
-
-        desired = math.atan2(2.0 * wheelbase * math.sin(alpha), dist) * units_per_rad
-        desired = max(-max_steer, min(max_steer, desired))
-
-        # Move the steering wheel towards the desired angle at the normal steering speed
-        step = (max_steer / self._frames_half_steering) * self.ROUTE_STEER_RATE
-        diff = desired - v.steering_angle
-        if diff > 0.0:
-            v.steer_left(min(diff, step))
-        elif diff < 0.0:
-            v.steer_right(min(-diff, step))
+        # --- steering ----------------------------------------------------------
+        self._set_steering(cmd.steer)
 
         # --- speed -------------------------------------------------------------
-        accel_step = self._time_between_steps * self._prop.acceleration
+        accel_step = dt * self._prop.acceleration
         decel = self._prop.acceleration * self.BRAKE_FACTOR
         floor = max(self.ROUTE_MIN_SPEED, 1.5 * self._prop.minimum_speed)
 
-        cruise = getattr(self._prop, "route_speed", self.ROUTE_CRUISE_SPEED)
+        if cmd.direction < 0:
+            cruise = getattr(self._prop, "route_reverse_speed", self.ROUTE_REVERSE_SPEED)
+        else:
+            cruise = getattr(self._prop, "route_speed", self.ROUTE_CRUISE_SPEED)
 
-        # Slow down for curves ahead (curvature of the pursuit arc)
-        kappa = abs(2.0 * math.sin(alpha) / dist)
-        v_curve = math.sqrt(self.ROUTE_MAX_LAT_ACCEL / kappa) if kappa > 1e-6 else cruise
+        if cmd.stops_at_end:
+            v_end = math.sqrt(2.0 * decel * max(cmd.remaining - 0.3, 0.0))
+        else:
+            v_end = cruise
 
-        # Slow down for the end of the route
-        v_end = math.sqrt(2.0 * decel * max(remaining - self.ROUTE_END_TOLERANCE, 0.0))
+        magnitude = max(floor, min(cruise, cmd.v_curve, v_end))
 
-        target_speed = max(floor, min(cruise, v_curve, v_end))
+        waiting = self._wait_frames > 0
+        if waiting:
+            self._wait_frames -= 1
+        if waiting or self._brake:
+            magnitude = 0.0
 
-        # Holding the brake key pauses the route; releasing it resumes
-        if self._brake:
-            target_speed = 0.0
+        target = cmd.direction * magnitude
+        dv = target - v.speed
+        if abs(dv) > 1e-9:
+            braking = v.speed * dv < 0.0
+            amount = min(abs(dv), accel_step * (self.BRAKE_FACTOR if braking else 1.0))
+            if dv > 0.0:
+                v.speed_up(amount)
+            else:
+                v.speed_down(amount)
 
-        dv = target_speed - v.speed
-        if dv > 0.0:
-            v.speed_up(min(dv, accel_step))
-        elif dv < 0.0:
-            v.speed_down(min(-dv, accel_step * self.BRAKE_FACTOR))
+        # --- stalled? ------------------------------------------------------------
+        if waiting or self._brake or self._simulation_paused:
+            self._stall_frames = 0
+        elif cmd.seg != self._stall_ref[0] or cmd.progress > self._stall_ref[1] + 0.2:
+            self._stall_ref = (cmd.seg, cmd.progress)
+            self._stall_frames = 0
+        else:
+            self._stall_frames += 1
+            if self._stall_frames * dt >= self.ROUTE_STALL_TIME:
+                self._fail_route("The vehicle is not making progress along the route.")
 
     # ------------------------------------------------------------------
     # Manual control helpers (frame based)
