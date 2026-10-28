@@ -1,0 +1,62 @@
+<svg
+    width="40"
+    height="22"
+    viewBox="0 0 40 22"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Ifor Williams GD85 general duty trailer, twin axle, top view. Scale 10 units = 1 m. Front (coupling) = right.
+         Source: https://www.iwt.co.uk/products/general-duty/general-duty/?tab=spec
+         Overall length 4.00 m, overall width 2.20 m, internal bed 2.50 x 1.58 m, tyres 165R13C.
+         Drawbar length, axle position and track are NOT published (estimates, see .py file). -->
+    <style>
+        .body   { stroke-width: 0.5; stroke: black; fill: white; }
+        .deck   { stroke-width: 0.3; stroke: black; fill: #d7c3a1; }
+        .frame  { stroke: black; stroke-width: 0.9; fill: none; stroke-linecap: round; }
+        .guard  { stroke-width: 0.4; stroke: black; fill: #cfd8dc; fill-opacity: 0.35; }
+        .wheel  { fill: black; }
+        .line   { stroke: black; stroke-width: 0.25; fill: none; }
+        .tail   { stroke: black; stroke-width: 0.3; fill: #c62828; }
+        .metal  { stroke: black; stroke-width: 0.4; fill: #eceff1; }
+    </style>
+
+    <g>
+    <!-- A-frame drawbar (two tubes converging on the coupling), cross member and coupling head -->
+    <path class="frame" d="M 26.5 6.2 L 36.7 10.2 M 26.5 15.8 L 36.7 11.8" />
+    <path class="line" d="M 31.2 8.25 V 13.75" />
+    <rect class="metal" x="36.5" y="9.7" width="3.5" height="2.6" rx="0.8" />
+    <circle cx="39.1" cy="11" r="0.9" fill="none" stroke="black" stroke-width="0.35" />
+    <!-- jockey wheel (raised) -->
+    <rect class="wheel" x="32.8" y="10.4" width="2.4" height="1.2" rx="0.4" />
+
+    <!-- body: steel sides and front panel -->
+    <rect class="body" x="0.25" y="2.3" width="26.0" height="17.4" rx="0.6" />
+    <!-- plywood deck 2.50 x 1.58 m -->
+    <rect class="deck" x="0.5" y="3.1" width="25.0" height="15.8" rx="0.2" />
+    <path class="line" d="M 6.5 3.1 V 18.9 M 12.5 3.1 V 18.9 M 18.5 3.1 V 18.9" />
+    <!-- rear ramp (folded, full width): hinge line, edge and handle -->
+    <path class="line" d="M 2.4 3.1 V 18.9" />
+    <rect class="metal" x="0.25" y="9.4" width="0.8" height="3.2" rx="0.3" />
+    <!-- front panel / hoop -->
+    <rect class="metal" x="24.9" y="3.1" width="1.6" height="15.8" rx="0.3" />
+    <!-- tail lights -->
+    <rect class="tail" x="0.0" y="2.6" width="0.7" height="1.8" rx="0.3" />
+    <rect class="tail" x="0.0" y="17.6" width="0.7" height="1.8" rx="0.3" />
+    </g>
+
+    <!-- twin axle: wheels sit outside the body under the mudguards. Effective axle centre at x=12.0 -->
+    <g transform="translate(12.0 11)">
+        <rect class="guard" x="-7.0" y="-10.5" width="14.0" height="2.9" rx="1.2" />
+        <rect class="guard" x="-7.0" y="7.6" width="14.0" height="2.9" rx="1.2" />
+        <rect id="left_rear_wheel_1" class="wheel" x="-6.4" y="-9.9" width="5.8" height="1.65" rx="0.8" />
+        <rect id="left_rear_wheel_2" class="wheel" x="0.6" y="-9.9" width="5.8" height="1.65" rx="0.8" />
+        <rect id="right_rear_wheel_1" class="wheel" x="-6.4" y="8.25" width="5.8" height="1.65" rx="0.8" />
+        <rect id="right_rear_wheel_2" class="wheel" x="0.6" y="8.25" width="5.8" height="1.65" rx="0.8" />
+        <circle
+            id="rear_axle_center_point"
+            cx="0"
+            cy="0"
+            r="0.5"
+            fill="black"
+        />
+    </g>
+</svg>

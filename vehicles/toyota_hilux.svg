@@ -1,0 +1,167 @@
+<svg
+    width="53.25"
+    height="18.55"
+    viewBox="0 0 53.25 18.55"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Toyota Hilux Double Cab, top view. Scale 10 units = 1 m. Front of vehicle = right.
+         Source: https://media.toyota.co.uk/wp-content/uploads/sites/5/pdf/230203M-Hilux-Tech-Spec.pdf
+         Length 5325 mm, width 1855 mm, wheelbase 3085 mm, front overhang 985 mm,
+         rear overhang 1255 mm, front/rear track 1540/1550 mm, deck length 1525 mm,
+         tyres 265/65R17 or 265/60R18 -->
+    <style>
+        .body {
+            stroke-width: 1;
+            stroke: black;
+            fill: white;
+        }
+        .wheel {
+            fill: black;
+        }
+        .line {
+            stroke: black;
+            stroke-width: 0.25;
+            fill: none;
+        }
+        .glass {
+            stroke: black;
+            stroke-width: 0.3;
+            fill: #cfd8dc;
+        }
+        .bed {
+            stroke: black;
+            stroke-width: 0.4;
+            fill: #eceff1;
+        }
+        .panel {
+            stroke: black;
+            stroke-width: 0.3;
+            fill: white;
+        }
+        .light {
+            stroke: black;
+            stroke-width: 0.3;
+            fill: #f5f5f5;
+        }
+        .tail {
+            stroke: black;
+            stroke-width: 0.3;
+            fill: #c62828;
+        }
+        .dark {
+            fill: #333333;
+        }
+    </style>
+
+    <g>
+    <!-- vehicle body outline (origin top left), tapered nose -->
+    <path
+        class="body"
+        d="M 1.5 0.5 H 47 C 50.5 0.5 52.75 2.5 52.75 5.2 V 13.35 C 52.75 16.05 50.5 18.05 47 18.05 H 1.5 Q 0.5 18.05 0.5 17.05 V 1.5 Q 0.5 0.5 1.5 0.5 Z"
+    />
+
+    <!-- load bed: floor, corrugation ribs, inner walls -->
+    <rect class="bed" x="1.2" y="1.8" width="15.25" height="14.95" rx="0.6" />
+    <path class="line" d="M 3.4 1.8 V 16.75 M 5.6 1.8 V 16.75 M 7.8 1.8 V 16.75 M 10.0 1.8 V 16.75 M 12.2 1.8 V 16.75 M 14.4 1.8 V 16.75" />
+    <!-- tailgate line and rear bumper -->
+    <path class="line" d="M 1.2 1.8 V 16.75" />
+    <rect class="panel" x="0.5" y="3.2" width="0.9" height="12.15" rx="0.4" />
+    <!-- tail lights -->
+    <rect class="tail" x="0.7" y="1.0" width="1.2" height="2.0" rx="0.4" />
+    <rect class="tail" x="0.7" y="15.55" width="1.2" height="2.0" rx="0.4" />
+
+    <!-- cab base (shoulders) -->
+    <rect class="panel" x="16.4" y="1.2" width="21.1" height="16.15" rx="3" />
+    <!-- rear window -->
+    <polygon class="glass" points="19.3,3.7 17.4,2.7 17.4,15.85 19.3,14.85" />
+    <!-- roof -->
+    <rect class="panel" x="19.3" y="3.0" width="12.9" height="12.55" rx="2.2" />
+    <path class="line" d="M 21.0 4.5 H 30.5 M 21.0 14.05 H 30.5" />
+    <!-- windscreen -->
+    <polygon class="glass" points="32.2,3.5 37.0,2.1 37.0,16.45 32.2,15.05" />
+    <!-- door shut lines (visible at shoulder) -->
+    <path class="line" d="M 24.6 1.2 V 3.0 M 24.6 15.55 V 17.35" />
+
+    <!-- bonnet: shut line, power bulge, front grille and lights -->
+    <rect class="line" x="38.0" y="3.0" width="13.2" height="12.55" rx="2.5" />
+    <rect class="line" x="40.5" y="6.3" width="8.5" height="5.95" rx="1.5" />
+    <rect class="dark" x="51.5" y="6.6" width="1.0" height="5.35" rx="0.4" />
+    <path class="light" d="M 47.6 1.5 Q 50.6 1.6 51.9 4.3 L 48.3 4.5 Q 47.4 3.0 47.6 1.5 Z" />
+    <path class="light" d="M 47.6 17.05 Q 50.6 16.95 51.9 14.25 L 48.3 14.05 Q 47.4 15.55 47.6 17.05 Z" />
+
+    <!-- door mirrors -->
+    <rect class="dark" x="33.8" y="0.8" width="2.4" height="1.3" rx="0.6" />
+    <rect class="dark" x="33.8" y="16.45" width="2.4" height="1.3" rx="0.6" />
+    </g>
+
+    <g transform="translate(43.4 1.575)">
+    <!-- left front wheel (origin left pivot) -->
+    <rect
+        id="left_wheel"
+        class="wheel"
+        x="-3.88"
+        y="-1.325"
+        width="7.76"
+        height="2.65"
+        rx="1"
+        transform="param(wheel_angle)"
+    />
+    <circle
+        id="left_pivot"
+        cx="0"
+        cy="0"
+        r="0.5"
+        fill="black"
+    />
+    </g>
+
+    <g transform="translate(43.4 16.975)">
+    <!-- right front wheel (origin right pivot)-->
+    <rect
+        id="right_wheel"
+        class="wheel"
+        x="-3.88"
+        y="-1.325"
+        width="7.76"
+        height="2.65"
+        rx="1"
+        transform="param(wheel_angle)"
+    />
+    <circle
+        id="right_pivot"
+        cx="0"
+        cy="0"
+        r="0.5"
+        fill="black"
+    />
+    </g>
+
+    <g transform="translate(12.55 9.275)">
+    <!-- back wheels (origin rear axle center point) -->
+        <rect
+            id="left_rear_wheel"
+            class="wheel"
+            x="-3.88"
+            y="-9.025"
+            width="7.76"
+            height="2.65"
+            rx="1"
+        />
+        <rect
+            id="right_rear_wheel"
+            class="wheel"
+            x="-3.88"
+            y="6.375"
+            width="7.76"
+            height="2.65"
+            rx="1"
+        />
+        <circle
+            id="rear_axle_center_point"
+            cx="0"
+            cy="0"
+            r="0.5"
+            fill="black"
+        />
+    </g>
+</svg>
