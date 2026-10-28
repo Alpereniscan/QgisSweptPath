@@ -93,7 +93,7 @@ class QgisSweptPath:
         self._map_extent: QgsRectangle = self.canvas.extent()
 
         # Route drawing
-        self._route_tool = RouteTool(self.canvas, lambda: self.vehicle)
+        self._route_tool = RouteTool(self.canvas, lambda: self.vehicle, lambda: self.prop)
         self._route_tool.routeFinished.connect(self._on_route_drawn)
         self._route_tool.routeCancelled.connect(self._on_route_cancelled)
 

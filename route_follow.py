@@ -68,6 +68,64 @@ class Tuning(object):
     HITCH_BLEND = 0.4
     HITCH_MIN_SINBETA = 0.08
 
+    @classmethod
+    def from_props(cls, prop):
+        """
+        Tuning with the values of the route settings dialog (QgisSweptPathDockWidgetProp).
+        Anything the properties object does not have keeps the default above.
+        """
+        t = cls()
+        if prop is None:
+            return t
+        for prop_name, attr, conv in _TUNING_PROPS:
+            try:
+                value = getattr(prop, prop_name, None)
+                if value is not None:
+                    setattr(t, attr, conv(value))
+            except (TypeError, ValueError):
+                continue
+        # Keep the controller usable whatever is typed into the dialog
+        t.SPACING = max(0.02, t.SPACING)
+        t.SMOOTHING = max(0, t.SMOOTHING)
+        t.SEARCH_WINDOW = max(5, t.SEARCH_WINDOW)
+        t.CURVE_LOOK = max(0.5, t.CURVE_LOOK)
+        t.FWD_SOFTEN = max(0.05, t.FWD_SOFTEN)
+        t.LAT_ACCEL = max(0.1, t.LAT_ACCEL)
+        t.END_TOL = max(0.05, t.END_TOL)
+        t.TRAILER_SAFETY = min(1.0, max(0.1, t.TRAILER_SAFETY))
+        t.TRAILER_FAIL_FRACTION = min(1.0, max(0.5, t.TRAILER_FAIL_FRACTION))
+        t.TRAILER_INNER_GAIN = max(0.1, t.TRAILER_INNER_GAIN)
+        t.TRAILER_LOOKAHEAD_MIN = max(0.5, t.TRAILER_LOOKAHEAD_MIN)
+        t.HITCH_BLEND = min(1.0, max(0.0, t.HITCH_BLEND))
+        return t
+
+
+# (property of the route settings dialog, Tuning attribute, conversion)
+_TUNING_PROPS = (
+    ("route_spacing", "SPACING", float),
+    ("route_smoothing", "SMOOTHING", int),
+    ("route_leadin", "LEADIN", float),
+    ("route_forward_softening", "FWD_SOFTEN", float),
+    ("route_reverse_lookahead_factor", "REV_LOOKAHEAD_FACTOR", float),
+    ("route_reverse_lookahead_min", "REV_LOOKAHEAD_MIN", float),
+    ("route_end_tolerance", "END_TOL", float),
+    ("route_max_deviation", "MAX_DEVIATION", float),
+    ("route_fail_distance", "FAIL_DISTANCE", float),
+    ("route_lat_accel", "LAT_ACCEL", float),
+    ("route_curve_lookahead", "CURVE_LOOK", float),
+    ("route_search_window", "SEARCH_WINDOW", int),
+    ("route_trailer_max_articulation", "TRAILER_MAX_ARTICULATION", float),
+    ("route_trailer_safety", "TRAILER_SAFETY", float),
+    ("route_trailer_fail_fraction", "TRAILER_FAIL_FRACTION", float),
+    ("route_trailer_inner_gain", "TRAILER_INNER_GAIN", float),
+    ("route_trailer_lookahead_factor", "TRAILER_LOOKAHEAD_FACTOR", float),
+    ("route_trailer_lookahead_min", "TRAILER_LOOKAHEAD_MIN", float),
+    ("route_trailer_beta_lead", "TRAILER_BETA_LEAD", float),
+    ("route_trailer_length_fallback", "TRAILER_LENGTH_FALLBACK", float),
+    ("route_hitch_blend", "HITCH_BLEND", float),
+    ("route_hitch_min_sin", "HITCH_MIN_SINBETA", float),
+)
+
 
 def wrap_pi(a):
     return (a + math.pi) % (2.0 * math.pi) - math.pi
@@ -166,16 +224,20 @@ def read_articulation(v, geom):
     except Exception:
         return None
 
-    R = _axle_mid(v, "rwl", "rwr")
+    # `h` is the rear-axle centre the vehicle maintains itself. It exists for every part, whereas the wheel
+    # points rwl/rwr are only rebuilt for parts that have a body (otherwise they are stale default values).
+    R = _pt(getattr(v, "h", None)) or _axle_mid(v, "rwl", "rwr")
     if R is None:
         R = geom.rear_from_front(fx, fy, th1)
-    T = _axle_mid(tr, "rwl", "rwr")
+    T = _pt(getattr(tr, "h", None)) or _axle_mid(tr, "rwl", "rwr")
     H = _pt(getattr(tr, "f", None))
     return {"R": R, "th1": th1, "T": T, "th2": th2, "H": H, "tr": tr}
 
 
 def _local_outline(tr, T, th2):
     """Trailer body corners in the trailer frame (origin = trailer axle, +x forward), or None."""
+    if getattr(tr, "has_body", True) is False:
+        return None
     pts = [_pt(getattr(tr, n, None)) for n in ("fl", "fr", "br", "bl")]
     if T is None or any(p is None for p in pts):
         return None
@@ -184,6 +246,12 @@ def _local_outline(tr, T, th2):
 
 
 def _find_limit(tr, v, default):
+    # Vehicle._max_trailer_angle (radians, default 54 deg) is stored on the parent vehicle
+    val = _num(v, ("max_trailer_angle", "_max_trailer_angle"))
+    if val is not None and val > 0.0:
+        if val > 3.2:                      # degrees
+            val = math.radians(val)
+        return min(val, math.radians(90.0))
     names = ("max_bending_angle", "_max_bending_angle", "bending_angle_max", "max_bend_angle",
              "max_hinge_angle", "_max_hinge_angle", "max_angle", "_max_angle")
     for obj in (tr, v):
@@ -311,7 +379,7 @@ class Geom(object):
         self.trailer = None                               # TrailerGeom or None
 
     @classmethod
-    def from_vehicle(cls, v):
+    def from_vehicle(cls, v, tuning=None):
         fa = _num(v, ("front_axle_ref_pos", "_front_axle_ref_pos"))
         ra = _num(v, ("rear_axle_ref_pos", "_rear_axle_ref_pos"))
         wheelbase = None
@@ -341,7 +409,7 @@ class Geom(object):
             mx = mx * unit
         g = cls(wheelbase, width, length, front_over, mx, unit)
         try:
-            g.trailer = TrailerGeom.from_vehicle(v, g)
+            g.trailer = TrailerGeom.from_vehicle(v, g, tuning)
         except Exception:
             g.trailer = None
         return g

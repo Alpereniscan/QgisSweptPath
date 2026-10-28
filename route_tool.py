@@ -8,7 +8,7 @@ from qgis.core import Qgis, QgsPointXY, QgsGeometry, QgsWkbTypes
 from qgis.gui import QgsMapTool, QgsMapCanvas, QgsRubberBand
 from qgis.utils import iface
 
-from .route_follow import Geom, simulate, read_articulation
+from .route_follow import Geom, Tuning, simulate, read_articulation
 
 FORWARD = 1
 REVERSE = -1
@@ -61,11 +61,16 @@ class RouteTool(QgsMapTool):
     # Simulation step of the preview (map units)
     PREVIEW_STEP: float = 0.1
 
-    def __init__(self, canvas: QgsMapCanvas, vehicle_getter=None):
-        """vehicle_getter: callable returning the current Vehicle (or None). Without it there is no preview."""
+    def __init__(self, canvas: QgsMapCanvas, vehicle_getter=None, prop_getter=None):
+        """
+        vehicle_getter: callable returning the current Vehicle (or None). Without it there is no preview.
+        prop_getter: callable returning the settings dialog (QgisSweptPathDockWidgetProp) or None.
+                     The class constants above are the defaults when no dialog is available.
+        """
         super().__init__(canvas)
         self._canvas = canvas
         self._vehicle_getter = vehicle_getter
+        self._prop_getter = prop_getter
         self._geom: Geom = None
         self._runs: list = [{"dir": FORWARD, "pts": []}]
         self._finished: bool = False
@@ -110,7 +115,7 @@ class RouteTool(QgsMapTool):
         super().activate()
         self.reset()
         v = self._vehicle()
-        self._geom = Geom.from_vehicle(v) if v is not None else None
+        self._geom = Geom.from_vehicle(v, self._tuning()) if v is not None else None
         iface.messageBar().pushMessage(
             "Draw route",
             "Click or drag to add points (the start is the vehicle). R = forward/reverse. "
@@ -156,6 +161,26 @@ class RouteTool(QgsMapTool):
     def direction(self) -> int:
         return self._runs[-1]["dir"]
 
+    def _prop(self):
+        if self._prop_getter is None:
+            return None
+        try:
+            return self._prop_getter()
+        except Exception:
+            return None
+
+    def _setting(self, name: str, default):
+        """Value of a route setting from the settings dialog, or the default if it has none."""
+        prop = self._prop()
+        value = getattr(prop, name, None) if prop is not None else None
+        return default if value is None else value
+
+    def _tuning(self) -> Tuning:
+        return Tuning.from_props(self._prop())
+
+    def _preview_step(self) -> float:
+        return max(0.02, float(self._setting("route_preview_step", self.PREVIEW_STEP)))
+
     # ------------------------------------------------------------------
     # Drawing the preview
     # ------------------------------------------------------------------
@@ -197,7 +222,8 @@ class RouteTool(QgsMapTool):
                 th2 = st["th2"]
 
         sim_runs = [{"dir": d, "pts": pts} for d, pts in raw if pts]
-        res = simulate(self._geom, fx, fy, th, sim_runs, step=self.PREVIEW_STEP, th2=th2)
+        res = simulate(self._geom, fx, fy, th, sim_runs, step=self._preview_step(),
+                       tuning=self._tuning(), th2=th2)
         self._result = res
 
         self._draw_guide(raw, (fx, fy, th))
@@ -273,9 +299,13 @@ class RouteTool(QgsMapTool):
         samples = res.samples[:end]
         if not samples:
             return
-        step = self.ENVELOPE_STEP_FINE if fine else self.ENVELOPE_STEP
-        every = max(1, int(round(step / self.PREVIEW_STEP)))
-        every = max(every, int(math.ceil(len(samples) / float(self.ENVELOPE_MAX_OUTLINES))))
+        if fine:
+            step = float(self._setting("route_envelope_step_fine", self.ENVELOPE_STEP_FINE))
+        else:
+            step = float(self._setting("route_envelope_step", self.ENVELOPE_STEP))
+        max_outlines = max(10, int(self._setting("route_envelope_max_outlines", self.ENVELOPE_MAX_OUTLINES)))
+        every = max(1, int(round(step / self._preview_step())))
+        every = max(every, int(math.ceil(len(samples) / float(max_outlines))))
         picks = samples[::every]
         if picks[-1] is not samples[-1]:
             picks.append(samples[-1])
@@ -340,7 +370,7 @@ class RouteTool(QgsMapTool):
         if self._last_px is not None:
             dx = px.x() - self._last_px.x()
             dy = px.y() - self._last_px.y()
-            if dx * dx + dy * dy < self.DUPLICATE_PIXELS ** 2:
+            if dx * dx + dy * dy < float(self._setting("route_duplicate_pixels", self.DUPLICATE_PIXELS)) ** 2:
                 return
         self._runs[-1]["pts"].append(QgsPointXY(pt))
         self._last_px = px
@@ -398,9 +428,10 @@ class RouteTool(QgsMapTool):
             px = event.pixelPoint()
             dx = px.x() - self._last_px.x()
             dy = px.y() - self._last_px.y()
-            if dx * dx + dy * dy >= self.FREEHAND_MIN_PIXELS ** 2:
+            if dx * dx + dy * dy >= float(self._setting("route_freehand_pixels", self.FREEHAND_MIN_PIXELS)) ** 2:
                 self._add_point(event.mapPoint(), px)
-        if time.monotonic() - self._last_preview_time >= self.PREVIEW_INTERVAL:
+        if time.monotonic() - self._last_preview_time >= float(
+                self._setting("route_preview_interval", self.PREVIEW_INTERVAL)):
             self._refresh(event.mapPoint())
 
     def canvasReleaseEvent(self, event):
