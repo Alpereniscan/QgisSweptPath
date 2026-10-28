@@ -789,7 +789,3407 @@
           </property>
          </widget>
         </item>
+        <item row="47" column="0" colspan="3">
+         <widget class="Line" name="line_8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="48" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteFollowing">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Route following</string>
+          </property>
+         </widget>
+        </item>
+        <item row="49" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteNote">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Hover the ? next to a setting for an explanation.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="50" column="0" colspan="3">
+         <widget class="QPushButton" name="btnResetRouteSettings">
+          <property name="text">
+           <string>Reset route settings</string>
+          </property>
+         </widget>
+        </item>
+        <item row="51" column="0" colspan="3">
+         <widget class="Line" name="line_9">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
         <item row="52" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteSpeedTitle">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Speeds</string>
+          </property>
+         </widget>
+        </item>
+        <item row="53" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteSpeedText">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Speed along a route, in map units per second (metres per second in a metric CRS).</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="54" column="0">
+         <widget class="QLabel" name="lblRouteSpeed">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Forward speed&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Target speed when driving forward along a route. The vehicle&lt;br/&gt;slows down by itself for tight curves and before the end of&lt;br/&gt;a run, so this is the top speed on straight parts. Only the&lt;br/&gt;timing of a run depends on it, not the line the vehicle&lt;br/&gt;drives.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 3.00 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Forward speed</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="54" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteSpeed">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Forward speed&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Target speed when driving forward along a route. The vehicle&lt;br/&gt;slows down by itself for tight curves and before the end of&lt;br/&gt;a run, so this is the top speed on straight parts. Only the&lt;br/&gt;timing of a run depends on it, not the line the vehicle&lt;br/&gt;drives.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 3.00 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m/s</string>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>30.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>3.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="54" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteSpeed">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Forward speed&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Target speed when driving forward along a route. The vehicle&lt;br/&gt;slows down by itself for tight curves and before the end of&lt;br/&gt;a run, so this is the top speed on straight parts. Only the&lt;br/&gt;timing of a run depends on it, not the line the vehicle&lt;br/&gt;drives.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 3.00 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="55" column="0">
+         <widget class="QLabel" name="lblRouteReverseSpeed">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse speed&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Top speed when reversing along a route (without a trailer).&lt;br/&gt;Lower than the forward speed by default because reversing&lt;br/&gt;needs more time to correct.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.50 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Reverse speed</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="55" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteReverseSpeed">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse speed&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Top speed when reversing along a route (without a trailer).&lt;br/&gt;Lower than the forward speed by default because reversing&lt;br/&gt;needs more time to correct.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.50 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m/s</string>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>30.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="55" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteReverseSpeed">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse speed&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Top speed when reversing along a route (without a trailer).&lt;br/&gt;Lower than the forward speed by default because reversing&lt;br/&gt;needs more time to correct.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.50 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="56" column="0">
+         <widget class="QLabel" name="lblRouteReverseSpeedTrailer">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse speed with trailer&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Top speed when reversing with a trailer. The lower of this&lt;br/&gt;value and the reverse speed is used. A trailer reacts to&lt;br/&gt;steering with a delay, so a lower speed leaves more time to&lt;br/&gt;correct the angle between tractor and trailer.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.00 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Reverse speed with trailer</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="56" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteReverseSpeedTrailer">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse speed with trailer&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Top speed when reversing with a trailer. The lower of this&lt;br/&gt;value and the reverse speed is used. A trailer reacts to&lt;br/&gt;steering with a delay, so a lower speed leaves more time to&lt;br/&gt;correct the angle between tractor and trailer.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.00 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m/s</string>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>30.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="56" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteReverseSpeedTrailer">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse speed with trailer&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Top speed when reversing with a trailer. The lower of this&lt;br/&gt;value and the reverse speed is used. A trailer reacts to&lt;br/&gt;steering with a delay, so a lower speed leaves more time to&lt;br/&gt;correct the angle between tractor and trailer.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.00 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="57" column="0">
+         <widget class="QLabel" name="lblRouteMinSpeed">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Minimum route speed&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Lowest speed used while on a route. It stops the vehicle&lt;br/&gt;from creeping to a halt just before the end of a run. The&lt;br/&gt;value actually used is never below 1.5 times the general&lt;br/&gt;'Minimum speed' setting.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.50 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Minimum route speed</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="57" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteMinSpeed">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Minimum route speed&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Lowest speed used while on a route. It stops the vehicle&lt;br/&gt;from creeping to a halt just before the end of a run. The&lt;br/&gt;value actually used is never below 1.5 times the general&lt;br/&gt;'Minimum speed' setting.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.50 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m/s</string>
+          </property>
+          <property name="minimum">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>10.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="57" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteMinSpeed">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Minimum route speed&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Lowest speed used while on a route. It stops the vehicle&lt;br/&gt;from creeping to a halt just before the end of a run. The&lt;br/&gt;value actually used is never below 1.5 times the general&lt;br/&gt;'Minimum speed' setting.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.50 m/s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="58" column="0" colspan="3">
+         <widget class="Line" name="line_10">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="59" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteSteerTitle">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Steering and braking</string>
+          </property>
+         </widget>
+        </item>
+        <item row="60" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteSteerText">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>How the steering wheel and brakes behave while a route is driven.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="61" column="0">
+         <widget class="QLabel" name="lblRouteSteerInstant">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Instant steering&lt;/b&gt;&lt;/p&gt;&lt;p&gt;On: the steering wheel jumps straight to the angle the route&lt;br/&gt;needs (stop-start assumption, as in CAD swept-path tools).&lt;br/&gt;Off: the wheel turns at the normal steering speed ('Steering&lt;br/&gt;time'), so tight turns need more distance to set up.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: on&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Instant steering</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="61" column="1">
+         <widget class="QCheckBox" name="propRouteSteerInstant">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Instant steering&lt;/b&gt;&lt;/p&gt;&lt;p&gt;On: the steering wheel jumps straight to the angle the route&lt;br/&gt;needs (stop-start assumption, as in CAD swept-path tools).&lt;br/&gt;Off: the wheel turns at the normal steering speed ('Steering&lt;br/&gt;time'), so tight turns need more distance to set up.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: on&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="61" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteSteerInstant">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Instant steering&lt;/b&gt;&lt;/p&gt;&lt;p&gt;On: the steering wheel jumps straight to the angle the route&lt;br/&gt;needs (stop-start assumption, as in CAD swept-path tools).&lt;br/&gt;Off: the wheel turns at the normal steering speed ('Steering&lt;br/&gt;time'), so tight turns need more distance to set up.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: on&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="62" column="0">
+         <widget class="QLabel" name="lblRouteSteerRate">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Steering speed factor&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Only used when 'Instant steering' is off. Multiplies the&lt;br/&gt;normal steering speed during a route: 1.0 = the same as&lt;br/&gt;manual driving, 2.0 = twice as fast.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.00&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Steering speed factor</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="62" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteSteerRate">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Steering speed factor&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Only used when 'Instant steering' is off. Multiplies the&lt;br/&gt;normal steering speed during a route: 1.0 = the same as&lt;br/&gt;manual driving, 2.0 = twice as fast.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.00&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>20.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="62" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteSteerRate">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Steering speed factor&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Only used when 'Instant steering' is off. Multiplies the&lt;br/&gt;normal steering speed during a route: 1.0 = the same as&lt;br/&gt;manual driving, 2.0 = twice as fast.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.00&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="63" column="0">
+         <widget class="QLabel" name="lblRouteLatAccel">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Curve acceleration limit&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Sideways acceleration allowed in curves. The vehicle slows&lt;br/&gt;down so that speed squared times curvature stays below this&lt;br/&gt;value. Higher = faster through bends, lower = gentler.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.50 m/s²&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Curve acceleration limit</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="63" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteLatAccel">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Curve acceleration limit&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Sideways acceleration allowed in curves. The vehicle slows&lt;br/&gt;down so that speed squared times curvature stays below this&lt;br/&gt;value. Higher = faster through bends, lower = gentler.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.50 m/s²&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m/s²</string>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>20.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="63" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteLatAccel">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Curve acceleration limit&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Sideways acceleration allowed in curves. The vehicle slows&lt;br/&gt;down so that speed squared times curvature stays below this&lt;br/&gt;value. Higher = faster through bends, lower = gentler.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.50 m/s²&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="64" column="0">
+         <widget class="QLabel" name="lblRouteBrakeFactor">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Braking factor&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How much harder the vehicle brakes than it accelerates&lt;br/&gt;during a route (multiplier on 'Acceleration/deceleration').&lt;br/&gt;It sets how early the vehicle starts slowing down before the&lt;br/&gt;end of a run and how fast it stops at a direction change.&lt;br/&gt;Manual driving is not affected.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 3.0&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Braking factor</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="64" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteBrakeFactor">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Braking factor&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How much harder the vehicle brakes than it accelerates&lt;br/&gt;during a route (multiplier on 'Acceleration/deceleration').&lt;br/&gt;It sets how early the vehicle starts slowing down before the&lt;br/&gt;end of a run and how fast it stops at a direction change.&lt;br/&gt;Manual driving is not affected.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 3.0&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>20.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="value">
+           <double>3.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="64" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteBrakeFactor">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Braking factor&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How much harder the vehicle brakes than it accelerates&lt;br/&gt;during a route (multiplier on 'Acceleration/deceleration').&lt;br/&gt;It sets how early the vehicle starts slowing down before the&lt;br/&gt;end of a run and how fast it stops at a direction change.&lt;br/&gt;Manual driving is not affected.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 3.0&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="65" column="0" colspan="3">
+         <widget class="Line" name="line_11">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="66" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteDriverTitle">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Driver interaction</string>
+          </property>
+         </widget>
+        </item>
+        <item row="67" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteDriverText">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Stops, timeouts and hand-over to the driver.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="68" column="0">
+         <widget class="QLabel" name="lblRouteCuspPause">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Pause at direction change&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Standstill time when a route changes between forward and&lt;br/&gt;reverse. During the pause the wheel already turns to the&lt;br/&gt;angle the next run needs.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.6 s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Pause at direction change</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="68" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteCuspPause">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Pause at direction change&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Standstill time when a route changes between forward and&lt;br/&gt;reverse. During the pause the wheel already turns to the&lt;br/&gt;angle the next run needs.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.6 s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> s</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>30.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.600000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="68" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteCuspPause">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Pause at direction change&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Standstill time when a route changes between forward and&lt;br/&gt;reverse. During the pause the wheel already turns to the&lt;br/&gt;angle the next run needs.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.6 s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="69" column="0">
+         <widget class="QLabel" name="lblRouteManualOverride">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Keys take over the route&lt;/b&gt;&lt;/p&gt;&lt;p&gt;On: pressing a steer or speed key while a route is running&lt;br/&gt;cancels the route and hands control back to you. Off: those&lt;br/&gt;keys are ignored during a route. The brake key always pauses&lt;br/&gt;the route while it is held.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: on&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Keys take over the route</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="69" column="1">
+         <widget class="QCheckBox" name="propRouteManualOverride">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Keys take over the route&lt;/b&gt;&lt;/p&gt;&lt;p&gt;On: pressing a steer or speed key while a route is running&lt;br/&gt;cancels the route and hands control back to you. Off: those&lt;br/&gt;keys are ignored during a route. The brake key always pauses&lt;br/&gt;the route while it is held.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: on&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="69" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteManualOverride">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Keys take over the route&lt;/b&gt;&lt;/p&gt;&lt;p&gt;On: pressing a steer or speed key while a route is running&lt;br/&gt;cancels the route and hands control back to you. Off: those&lt;br/&gt;keys are ignored during a route. The brake key always pauses&lt;br/&gt;the route while it is held.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: on&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="70" column="0">
+         <widget class="QLabel" name="lblRouteStallTime">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;No-progress timeout&lt;/b&gt;&lt;/p&gt;&lt;p&gt;If the vehicle gains less than 0.2 m along the route for&lt;br/&gt;this long, the route is declared impossible and the run&lt;br/&gt;stops. Waiting at a direction change, holding the brake key&lt;br/&gt;and pausing the simulation are not counted.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 8 s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>No-progress timeout</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="70" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteStallTime">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;No-progress timeout&lt;/b&gt;&lt;/p&gt;&lt;p&gt;If the vehicle gains less than 0.2 m along the route for&lt;br/&gt;this long, the route is declared impossible and the run&lt;br/&gt;stops. Waiting at a direction change, holding the brake key&lt;br/&gt;and pausing the simulation are not counted.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 8 s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> s</string>
+          </property>
+          <property name="decimals">
+           <number>0</number>
+          </property>
+          <property name="minimum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>600.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>8.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="70" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteStallTime">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;No-progress timeout&lt;/b&gt;&lt;/p&gt;&lt;p&gt;If the vehicle gains less than 0.2 m along the route for&lt;br/&gt;this long, the route is declared impossible and the run&lt;br/&gt;stops. Waiting at a direction change, holding the brake key&lt;br/&gt;and pausing the simulation are not counted.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 8 s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="71" column="0">
+         <widget class="QLabel" name="lblRouteShowTrailerInfo">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Show trailer info&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Shows a message when a route starts with the hitch geometry&lt;br/&gt;the controller detected (hitch distance, trailer axle&lt;br/&gt;distance, bending limit). Useful to check that a trailer is&lt;br/&gt;read correctly.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: on&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Show trailer info</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="71" column="1">
+         <widget class="QCheckBox" name="propRouteShowTrailerInfo">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Show trailer info&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Shows a message when a route starts with the hitch geometry&lt;br/&gt;the controller detected (hitch distance, trailer axle&lt;br/&gt;distance, bending limit). Useful to check that a trailer is&lt;br/&gt;read correctly.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: on&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="71" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteShowTrailerInfo">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Show trailer info&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Shows a message when a route starts with the hitch geometry&lt;br/&gt;the controller detected (hitch distance, trailer axle&lt;br/&gt;distance, bending limit). Useful to check that a trailer is&lt;br/&gt;read correctly.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: on&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="72" column="0" colspan="3">
+         <widget class="Line" name="line_12">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="73" column="0" colspan="3">
+         <widget class="QLabel" name="lblRoutePathTitle">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Path shape</string>
+          </property>
+         </widget>
+        </item>
+        <item row="74" column="0" colspan="3">
+         <widget class="QLabel" name="lblRoutePathText">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>How the line you draw is turned into the path the vehicle follows.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="75" column="0">
+         <widget class="QLabel" name="lblRouteSmoothing">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Corner smoothing&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Rounds the corners of the drawn line before the vehicle&lt;br/&gt;follows it (Chaikin corner cutting). 0 follows the clicked&lt;br/&gt;points exactly, with sharp corners a vehicle cannot drive.&lt;br/&gt;Any value from 1 cuts a 90 degree corner by about 0.18 times&lt;br/&gt;the length of the adjacent legs; higher values only make the&lt;br/&gt;rounded curve smoother. Add clicks close to a corner to cut&lt;br/&gt;it less.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Corner smoothing</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="75" column="1">
+         <widget class="QSpinBox" name="propRouteSmoothing">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Corner smoothing&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Rounds the corners of the drawn line before the vehicle&lt;br/&gt;follows it (Chaikin corner cutting). 0 follows the clicked&lt;br/&gt;points exactly, with sharp corners a vehicle cannot drive.&lt;br/&gt;Any value from 1 cuts a 90 degree corner by about 0.18 times&lt;br/&gt;the length of the adjacent legs; higher values only make the&lt;br/&gt;rounded curve smoother. Add clicks close to a corner to cut&lt;br/&gt;it less.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>5</number>
+          </property>
+          <property name="value">
+           <number>2</number>
+          </property>
+         </widget>
+        </item>
+        <item row="75" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteSmoothing">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Corner smoothing&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Rounds the corners of the drawn line before the vehicle&lt;br/&gt;follows it (Chaikin corner cutting). 0 follows the clicked&lt;br/&gt;points exactly, with sharp corners a vehicle cannot drive.&lt;br/&gt;Any value from 1 cuts a 90 degree corner by about 0.18 times&lt;br/&gt;the length of the adjacent legs; higher values only make the&lt;br/&gt;rounded curve smoother. Add clicks close to a corner to cut&lt;br/&gt;it less.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="76" column="0">
+         <widget class="QLabel" name="lblRouteLeadin">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Lead-in length&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Length of a straight run-in added at the start of every run,&lt;br/&gt;in the direction the vehicle is moving. Without it a first&lt;br/&gt;click to the side of the vehicle would demand a sideways&lt;br/&gt;step. Raise it if the vehicle swings sharply at the start of&lt;br/&gt;a run. 0 switches it off. Corner smoothing also rounds the&lt;br/&gt;end of the run-in, so the part that stays straight is&lt;br/&gt;shorter than this value.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Lead-in length</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="76" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteLeadin">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Lead-in length&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Length of a straight run-in added at the start of every run,&lt;br/&gt;in the direction the vehicle is moving. Without it a first&lt;br/&gt;click to the side of the vehicle would demand a sideways&lt;br/&gt;step. Raise it if the vehicle swings sharply at the start of&lt;br/&gt;a run. 0 switches it off. Corner smoothing also rounds the&lt;br/&gt;end of the run-in, so the part that stays straight is&lt;br/&gt;shorter than this value.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>20.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="76" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteLeadin">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Lead-in length&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Length of a straight run-in added at the start of every run,&lt;br/&gt;in the direction the vehicle is moving. Without it a first&lt;br/&gt;click to the side of the vehicle would demand a sideways&lt;br/&gt;step. Raise it if the vehicle swings sharply at the start of&lt;br/&gt;a run. 0 switches it off. Corner smoothing also rounds the&lt;br/&gt;end of the run-in, so the part that stays straight is&lt;br/&gt;shorter than this value.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="77" column="0">
+         <widget class="QLabel" name="lblRouteSpacing">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Path point spacing&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Distance between the points of the path the vehicle follows.&lt;br/&gt;Smaller = smoother curvature but slower; larger = faster but&lt;br/&gt;coarser. The 'Search window' under advanced gains is counted&lt;br/&gt;in points, so a smaller spacing shortens the distance it&lt;br/&gt;covers. Rarely needs changing.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.25 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Path point spacing</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="77" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteSpacing">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Path point spacing&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Distance between the points of the path the vehicle follows.&lt;br/&gt;Smaller = smoother curvature but slower; larger = faster but&lt;br/&gt;coarser. The 'Search window' under advanced gains is counted&lt;br/&gt;in points, so a smaller spacing shortens the distance it&lt;br/&gt;covers. Rarely needs changing.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.25 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="minimum">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>2.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.250000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="77" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteSpacing">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Path point spacing&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Distance between the points of the path the vehicle follows.&lt;br/&gt;Smaller = smoother curvature but slower; larger = faster but&lt;br/&gt;coarser. The 'Search window' under advanced gains is counted&lt;br/&gt;in points, so a smaller spacing shortens the distance it&lt;br/&gt;covers. Rarely needs changing.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.25 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="78" column="0">
+         <widget class="QLabel" name="lblRouteEndTolerance">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Run end tolerance&lt;/b&gt;&lt;/p&gt;&lt;p&gt;A run counts as finished when the followed point is this&lt;br/&gt;close to the end of its path. Lower = the vehicle ends&lt;br/&gt;closer to your last click but needs more precise tracking;&lt;br/&gt;higher = it stops earlier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.30 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Run end tolerance</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="78" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteEndTolerance">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Run end tolerance&lt;/b&gt;&lt;/p&gt;&lt;p&gt;A run counts as finished when the followed point is this&lt;br/&gt;close to the end of its path. Lower = the vehicle ends&lt;br/&gt;closer to your last click but needs more precise tracking;&lt;br/&gt;higher = it stops earlier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.30 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="minimum">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.300000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="78" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteEndTolerance">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Run end tolerance&lt;/b&gt;&lt;/p&gt;&lt;p&gt;A run counts as finished when the followed point is this&lt;br/&gt;close to the end of its path. Lower = the vehicle ends&lt;br/&gt;closer to your last click but needs more precise tracking;&lt;br/&gt;higher = it stops earlier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.30 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="79" column="0" colspan="3">
+         <widget class="Line" name="line_13">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="80" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteFailTitle">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Failure detection</string>
+          </property>
+         </widget>
+        </item>
+        <item row="81" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteFailText">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>When a route is declared impossible.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="82" column="0">
+         <widget class="QLabel" name="lblRouteMaxDeviation">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Max. deviation&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Distance from the drawn line beyond which the vehicle counts&lt;br/&gt;as 'off the route'. Being off the route only fails the run&lt;br/&gt;if it lasts for the 'Fail distance'. Raise it if good routes&lt;br/&gt;are rejected.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Max. deviation</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="82" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteMaxDeviation">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Max. deviation&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Distance from the drawn line beyond which the vehicle counts&lt;br/&gt;as 'off the route'. Being off the route only fails the run&lt;br/&gt;if it lasts for the 'Fail distance'. Raise it if good routes&lt;br/&gt;are rejected.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>20.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="82" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteMaxDeviation">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Max. deviation&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Distance from the drawn line beyond which the vehicle counts&lt;br/&gt;as 'off the route'. Being off the route only fails the run&lt;br/&gt;if it lasts for the 'Fail distance'. Raise it if good routes&lt;br/&gt;are rejected.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="83" column="0">
+         <widget class="QLabel" name="lblRouteFailDistance">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Fail distance&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How far the vehicle may travel while off the route (see&lt;br/&gt;'Max. deviation') before the route is declared impossible.&lt;br/&gt;It is a travelled distance, so a standing vehicle never&lt;br/&gt;fails this way.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Fail distance</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="83" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteFailDistance">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Fail distance&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How far the vehicle may travel while off the route (see&lt;br/&gt;'Max. deviation') before the route is declared impossible.&lt;br/&gt;It is a travelled distance, so a standing vehicle never&lt;br/&gt;fails this way.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>50.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>2.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="83" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteFailDistance">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Fail distance&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How far the vehicle may travel while off the route (see&lt;br/&gt;'Max. deviation') before the route is declared impossible.&lt;br/&gt;It is a travelled distance, so a standing vehicle never&lt;br/&gt;fails this way.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="84" column="0" colspan="3">
+         <widget class="Line" name="line_14">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="85" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteToolTitle">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Drawing tool and preview</string>
+          </property>
+         </widget>
+        </item>
+        <item row="86" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteToolText">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Mouse handling and the quality of the live preview while drawing a route.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="87" column="0">
+         <widget class="QLabel" name="lblRouteFreehandPixels">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Freehand point spacing&lt;/b&gt;&lt;/p&gt;&lt;p&gt;While dragging with the mouse button held, a new point is&lt;br/&gt;added each time the cursor has moved this many screen&lt;br/&gt;pixels. Lower = a smoother freehand line with more points.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 8 px&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Freehand point spacing</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="87" column="1">
+         <widget class="QSpinBox" name="propRouteFreehandPixels">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Freehand point spacing&lt;/b&gt;&lt;/p&gt;&lt;p&gt;While dragging with the mouse button held, a new point is&lt;br/&gt;added each time the cursor has moved this many screen&lt;br/&gt;pixels. Lower = a smoother freehand line with more points.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 8 px&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> px</string>
+          </property>
+          <property name="minimum">
+           <number>2</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>8</number>
+          </property>
+         </widget>
+        </item>
+        <item row="87" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteFreehandPixels">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Freehand point spacing&lt;/b&gt;&lt;/p&gt;&lt;p&gt;While dragging with the mouse button held, a new point is&lt;br/&gt;added each time the cursor has moved this many screen&lt;br/&gt;pixels. Lower = a smoother freehand line with more points.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 8 px&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="88" column="0">
+         <widget class="QLabel" name="lblRouteDuplicatePixels">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Ignore clicks closer than&lt;/b&gt;&lt;/p&gt;&lt;p&gt;A click closer than this many pixels to the previous point&lt;br/&gt;is ignored, so a double-click does not add a duplicate&lt;br/&gt;point.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2 px&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Ignore clicks closer than</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="88" column="1">
+         <widget class="QSpinBox" name="propRouteDuplicatePixels">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Ignore clicks closer than&lt;/b&gt;&lt;/p&gt;&lt;p&gt;A click closer than this many pixels to the previous point&lt;br/&gt;is ignored, so a double-click does not add a duplicate&lt;br/&gt;point.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2 px&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> px</string>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>20</number>
+          </property>
+          <property name="value">
+           <number>2</number>
+          </property>
+         </widget>
+        </item>
+        <item row="88" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteDuplicatePixels">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Ignore clicks closer than&lt;/b&gt;&lt;/p&gt;&lt;p&gt;A click closer than this many pixels to the previous point&lt;br/&gt;is ignored, so a double-click does not add a duplicate&lt;br/&gt;point.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2 px&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="89" column="0">
+         <widget class="QLabel" name="lblRoutePreviewInterval">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Preview refresh interval&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Minimum time between preview updates while the mouse moves.&lt;br/&gt;Raise it if the preview makes the map feel sluggish on long&lt;br/&gt;routes; lower it for a more fluid preview.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.07 s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Preview refresh interval</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="89" column="1">
+         <widget class="QDoubleSpinBox" name="propRoutePreviewInterval">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Preview refresh interval&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Minimum time between preview updates while the mouse moves.&lt;br/&gt;Raise it if the preview makes the map feel sluggish on long&lt;br/&gt;routes; lower it for a more fluid preview.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.07 s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> s</string>
+          </property>
+          <property name="minimum">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>2.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.070000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="89" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRoutePreviewInterval">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Preview refresh interval&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Minimum time between preview updates while the mouse moves.&lt;br/&gt;Raise it if the preview makes the map feel sluggish on long&lt;br/&gt;routes; lower it for a more fluid preview.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.07 s&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="90" column="0">
+         <widget class="QLabel" name="lblRouteEnvelopeStep">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Swept area detail (moving)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Spacing of the vehicle outlines merged into the swept area&lt;br/&gt;while the mouse moves. Larger = faster preview, coarser edge&lt;br/&gt;of the swept area.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.30 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Swept area detail (moving)</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="90" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteEnvelopeStep">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Swept area detail (moving)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Spacing of the vehicle outlines merged into the swept area&lt;br/&gt;while the mouse moves. Larger = faster preview, coarser edge&lt;br/&gt;of the swept area.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.30 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="minimum">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.300000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="90" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteEnvelopeStep">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Swept area detail (moving)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Spacing of the vehicle outlines merged into the swept area&lt;br/&gt;while the mouse moves. Larger = faster preview, coarser edge&lt;br/&gt;of the swept area.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.30 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="91" column="0">
+         <widget class="QLabel" name="lblRouteEnvelopeStepFine">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Swept area detail (final)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Same as above, used after a click and when the route is&lt;br/&gt;finished, so the final outline is more accurate.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.12 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Swept area detail (final)</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="91" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteEnvelopeStepFine">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Swept area detail (final)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Same as above, used after a click and when the route is&lt;br/&gt;finished, so the final outline is more accurate.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.12 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="minimum">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.120000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="91" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteEnvelopeStepFine">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Swept area detail (final)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Same as above, used after a click and when the route is&lt;br/&gt;finished, so the final outline is more accurate.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.12 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="92" column="0">
+         <widget class="QLabel" name="lblRouteEnvelopeMaxOutlines">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Max. outlines in swept area&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Upper limit for the number of vehicle outlines merged into&lt;br/&gt;the swept area. On very long routes the spacing is increased&lt;br/&gt;to stay below this limit, which keeps the preview&lt;br/&gt;responsive.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 450&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Max. outlines in swept area</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="92" column="1">
+         <widget class="QSpinBox" name="propRouteEnvelopeMaxOutlines">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Max. outlines in swept area&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Upper limit for the number of vehicle outlines merged into&lt;br/&gt;the swept area. On very long routes the spacing is increased&lt;br/&gt;to stay below this limit, which keeps the preview&lt;br/&gt;responsive.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 450&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <number>50</number>
+          </property>
+          <property name="maximum">
+           <number>5000</number>
+          </property>
+          <property name="singleStep">
+           <number>50</number>
+          </property>
+          <property name="value">
+           <number>450</number>
+          </property>
+         </widget>
+        </item>
+        <item row="92" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteEnvelopeMaxOutlines">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Max. outlines in swept area&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Upper limit for the number of vehicle outlines merged into&lt;br/&gt;the swept area. On very long routes the spacing is increased&lt;br/&gt;to stay below this limit, which keeps the preview&lt;br/&gt;responsive.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 450&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="93" column="0">
+         <widget class="QLabel" name="lblRoutePreviewStep">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Preview simulation step&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Distance per step of the simulation that drives the preview.&lt;br/&gt;Smaller = a more accurate preview of tight turns but slower.&lt;br/&gt;The preview and the real run follow the same line; this only&lt;br/&gt;affects how accurately the preview is drawn.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.10 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Preview simulation step</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="93" column="1">
+         <widget class="QDoubleSpinBox" name="propRoutePreviewStep">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Preview simulation step&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Distance per step of the simulation that drives the preview.&lt;br/&gt;Smaller = a more accurate preview of tight turns but slower.&lt;br/&gt;The preview and the real run follow the same line; this only&lt;br/&gt;affects how accurately the preview is drawn.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.10 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="minimum">
+           <double>0.020000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.100000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="93" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRoutePreviewStep">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Preview simulation step&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Distance per step of the simulation that drives the preview.&lt;br/&gt;Smaller = a more accurate preview of tight turns but slower.&lt;br/&gt;The preview and the real run follow the same line; this only&lt;br/&gt;affects how accurately the preview is drawn.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.10 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="94" column="0" colspan="3">
+         <widget class="Line" name="line_15">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="95" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteAdvTitle">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Advanced controller gains</string>
+          </property>
+         </widget>
+        </item>
+        <item row="96" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteAdvText">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Gains of the steering controller. The defaults work for most vehicles. Change one value at a time.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="97" column="0">
+         <widget class="QLabel" name="lblRouteForwardSoftening">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Forward cross-track gain&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Forward steering correction for the distance from the line:&lt;br/&gt;the correction is the arctangent of (distance / this value).&lt;br/&gt;Smaller = pulls back onto the line harder, but too small&lt;br/&gt;makes the vehicle weave. Larger = a gentler return.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.2 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Forward cross-track gain</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="97" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteForwardSoftening">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Forward cross-track gain&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Forward steering correction for the distance from the line:&lt;br/&gt;the correction is the arctangent of (distance / this value).&lt;br/&gt;Smaller = pulls back onto the line harder, but too small&lt;br/&gt;makes the vehicle weave. Larger = a gentler return.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.2 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>10.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.200000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="97" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteForwardSoftening">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Forward cross-track gain&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Forward steering correction for the distance from the line:&lt;br/&gt;the correction is the arctangent of (distance / this value).&lt;br/&gt;Smaller = pulls back onto the line harder, but too small&lt;br/&gt;makes the vehicle weave. Larger = a gentler return.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.2 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="98" column="0">
+         <widget class="QLabel" name="lblRouteReverseLookaheadFactor">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse look-ahead (x wheelbase)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Reverse look-ahead without a trailer, as a fraction of the&lt;br/&gt;wheelbase: the point on the line that the rear axle aims at.&lt;br/&gt;The larger of this and the minimum look-ahead is used.&lt;br/&gt;Smaller = tighter tracking but it can oscillate; larger =&lt;br/&gt;smoother but it cuts curves.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.60&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Reverse look-ahead (x wheelbase)</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="98" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteReverseLookaheadFactor">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse look-ahead (x wheelbase)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Reverse look-ahead without a trailer, as a fraction of the&lt;br/&gt;wheelbase: the point on the line that the rear axle aims at.&lt;br/&gt;The larger of this and the minimum look-ahead is used.&lt;br/&gt;Smaller = tighter tracking but it can oscillate; larger =&lt;br/&gt;smoother but it cuts curves.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.60&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.600000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="98" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteReverseLookaheadFactor">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse look-ahead (x wheelbase)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Reverse look-ahead without a trailer, as a fraction of the&lt;br/&gt;wheelbase: the point on the line that the rear axle aims at.&lt;br/&gt;The larger of this and the minimum look-ahead is used.&lt;br/&gt;Smaller = tighter tracking but it can oscillate; larger =&lt;br/&gt;smoother but it cuts curves.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.60&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="99" column="0">
+         <widget class="QLabel" name="lblRouteReverseLookaheadMin">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse look-ahead (minimum)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Smallest reverse look-ahead distance. It takes over for&lt;br/&gt;short-wheelbase vehicles where the factor above would give a&lt;br/&gt;very short look-ahead. Raising it makes the vehicle cut&lt;br/&gt;curves more.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.2 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Reverse look-ahead (minimum)</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="99" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteReverseLookaheadMin">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse look-ahead (minimum)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Smallest reverse look-ahead distance. It takes over for&lt;br/&gt;short-wheelbase vehicles where the factor above would give a&lt;br/&gt;very short look-ahead. Raising it makes the vehicle cut&lt;br/&gt;curves more.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.2 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.200000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>20.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.200000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="99" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteReverseLookaheadMin">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Reverse look-ahead (minimum)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Smallest reverse look-ahead distance. It takes over for&lt;br/&gt;short-wheelbase vehicles where the factor above would give a&lt;br/&gt;very short look-ahead. Raising it makes the vehicle cut&lt;br/&gt;curves more.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.2 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="100" column="0">
+         <widget class="QLabel" name="lblRouteCurveLookahead">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Curve look-ahead&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How far ahead along the path the curvature is checked when&lt;br/&gt;planning the speed. Larger = the vehicle starts slowing down&lt;br/&gt;for a bend earlier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 5.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Curve look-ahead</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="100" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteCurveLookahead">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Curve look-ahead&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How far ahead along the path the curvature is checked when&lt;br/&gt;planning the speed. Larger = the vehicle starts slowing down&lt;br/&gt;for a bend earlier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 5.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>100.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="value">
+           <double>5.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="100" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteCurveLookahead">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Curve look-ahead&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How far ahead along the path the curvature is checked when&lt;br/&gt;planning the speed. Larger = the vehicle starts slowing down&lt;br/&gt;for a bend earlier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 5.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="101" column="0">
+         <widget class="QLabel" name="lblRouteSearchWindow">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Search window&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How many path points ahead of the current position are&lt;br/&gt;searched to find where the vehicle is on the path (distance&lt;br/&gt;= points times point spacing). It stops the search from&lt;br/&gt;jumping to a later part of a path that crosses itself. Raise&lt;br/&gt;it only if the vehicle can move further than this between&lt;br/&gt;two frames.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 60 pts&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Search window</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="101" column="1">
+         <widget class="QSpinBox" name="propRouteSearchWindow">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Search window&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How many path points ahead of the current position are&lt;br/&gt;searched to find where the vehicle is on the path (distance&lt;br/&gt;= points times point spacing). It stops the search from&lt;br/&gt;jumping to a later part of a path that crosses itself. Raise&lt;br/&gt;it only if the vehicle can move further than this between&lt;br/&gt;two frames.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 60 pts&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> pts</string>
+          </property>
+          <property name="minimum">
+           <number>10</number>
+          </property>
+          <property name="maximum">
+           <number>2000</number>
+          </property>
+          <property name="singleStep">
+           <number>10</number>
+          </property>
+          <property name="value">
+           <number>60</number>
+          </property>
+         </widget>
+        </item>
+        <item row="101" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteSearchWindow">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Search window&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How many path points ahead of the current position are&lt;br/&gt;searched to find where the vehicle is on the path (distance&lt;br/&gt;= points times point spacing). It stops the search from&lt;br/&gt;jumping to a later part of a path that crosses itself. Raise&lt;br/&gt;it only if the vehicle can move further than this between&lt;br/&gt;two frames.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 60 pts&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="102" column="0" colspan="3">
+         <widget class="Line" name="line_16">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="103" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteTrailerTitle">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Trailer reversing</string>
+          </property>
+         </widget>
+        </item>
+        <item row="104" column="0" colspan="3">
+         <widget class="QLabel" name="lblRouteTrailerText">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Controller for reversing with a trailer. Only used when the vehicle has a trailer.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="105" column="0">
+         <widget class="QLabel" name="lblRouteTrailerMaxArticulation">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Bending limit&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Maximum angle between tractor and trailer that the&lt;br/&gt;controller assumes. A different value is used only if the&lt;br/&gt;vehicle exposes its own bending limit under an attribute&lt;br/&gt;name the controller recognises. The controller never&lt;br/&gt;commands more than the 'Safety fraction' times this angle,&lt;br/&gt;and stops the run as a jackknife close to it. A value that&lt;br/&gt;is too low makes tight reverse turns impossible.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 45 °&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Bending limit</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="105" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteTrailerMaxArticulation">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Bending limit&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Maximum angle between tractor and trailer that the&lt;br/&gt;controller assumes. A different value is used only if the&lt;br/&gt;vehicle exposes its own bending limit under an attribute&lt;br/&gt;name the controller recognises. The controller never&lt;br/&gt;commands more than the 'Safety fraction' times this angle,&lt;br/&gt;and stops the run as a jackknife close to it. A value that&lt;br/&gt;is too low makes tight reverse turns impossible.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 45 °&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> °</string>
+          </property>
+          <property name="decimals">
+           <number>0</number>
+          </property>
+          <property name="minimum">
+           <double>10.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>90.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>45.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="105" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteTrailerMaxArticulation">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Bending limit&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Maximum angle between tractor and trailer that the&lt;br/&gt;controller assumes. A different value is used only if the&lt;br/&gt;vehicle exposes its own bending limit under an attribute&lt;br/&gt;name the controller recognises. The controller never&lt;br/&gt;commands more than the 'Safety fraction' times this angle,&lt;br/&gt;and stops the run as a jackknife close to it. A value that&lt;br/&gt;is too low makes tight reverse turns impossible.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 45 °&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="106" column="0">
+         <widget class="QLabel" name="lblRouteTrailerSafety">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Safety fraction&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Fraction of the bending limit the controller may command&lt;br/&gt;when reversing. Lower = more margin against jackknifing but&lt;br/&gt;wider turns are needed. It is also limited by the angle the&lt;br/&gt;steering lock can hold.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.80&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Safety fraction</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="106" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteTrailerSafety">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Safety fraction&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Fraction of the bending limit the controller may command&lt;br/&gt;when reversing. Lower = more margin against jackknifing but&lt;br/&gt;wider turns are needed. It is also limited by the angle the&lt;br/&gt;steering lock can hold.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.80&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <double>0.300000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.800000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="106" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteTrailerSafety">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Safety fraction&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Fraction of the bending limit the controller may command&lt;br/&gt;when reversing. Lower = more margin against jackknifing but&lt;br/&gt;wider turns are needed. It is also limited by the angle the&lt;br/&gt;steering lock can hold.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.80&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="107" column="0">
+         <widget class="QLabel" name="lblRouteTrailerFailFraction">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Jackknife stop fraction&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The run is stopped as a jackknife when the angle between&lt;br/&gt;tractor and trailer exceeds this fraction of the bending&lt;br/&gt;limit. Normally only reached when a situation is forced, for&lt;br/&gt;example starting a reverse from an already large angle.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.97&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Jackknife stop fraction</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="107" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteTrailerFailFraction">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Jackknife stop fraction&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The run is stopped as a jackknife when the angle between&lt;br/&gt;tractor and trailer exceeds this fraction of the bending&lt;br/&gt;limit. Normally only reached when a situation is forced, for&lt;br/&gt;example starting a reverse from an already large angle.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.97&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.970000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="107" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteTrailerFailFraction">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Jackknife stop fraction&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The run is stopped as a jackknife when the angle between&lt;br/&gt;tractor and trailer exceeds this fraction of the bending&lt;br/&gt;limit. Normally only reached when a situation is forced, for&lt;br/&gt;example starting a reverse from an already large angle.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.97&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="108" column="0">
+         <widget class="QLabel" name="lblRouteTrailerInnerGain">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Articulation gain&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How fast the angle between tractor and trailer is pulled to&lt;br/&gt;its target (per metre travelled; the length constant is 1 /&lt;br/&gt;value metres). Higher = snappier but it may overshoot; lower&lt;br/&gt;= calmer. Keep it clearly faster than the trailer look-&lt;br/&gt;ahead.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.5 1/m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Articulation gain</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="108" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteTrailerInnerGain">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Articulation gain&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How fast the angle between tractor and trailer is pulled to&lt;br/&gt;its target (per metre travelled; the length constant is 1 /&lt;br/&gt;value metres). Higher = snappier but it may overshoot; lower&lt;br/&gt;= calmer. Keep it clearly faster than the trailer look-&lt;br/&gt;ahead.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.5 1/m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> 1/m</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.200000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>10.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="108" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteTrailerInnerGain">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Articulation gain&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How fast the angle between tractor and trailer is pulled to&lt;br/&gt;its target (per metre travelled; the length constant is 1 /&lt;br/&gt;value metres). Higher = snappier but it may overshoot; lower&lt;br/&gt;= calmer. Keep it clearly faster than the trailer look-&lt;br/&gt;ahead.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 1.5 1/m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="109" column="0">
+         <widget class="QLabel" name="lblRouteTrailerLookaheadFactor">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Trailer look-ahead (x axle distance)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Look-ahead for the trailer axle as a fraction of the hitch-&lt;br/&gt;to-axle distance. The larger of this and the minimum look-&lt;br/&gt;ahead is used. Smaller = the trailer follows the line more&lt;br/&gt;tightly; values that are too small make the controller&lt;br/&gt;unstable. Larger = smoother but it cuts curves and can hunt.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.50&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Trailer look-ahead (x axle distance)</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="109" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteTrailerLookaheadFactor">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Trailer look-ahead (x axle distance)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Look-ahead for the trailer axle as a fraction of the hitch-&lt;br/&gt;to-axle distance. The larger of this and the minimum look-&lt;br/&gt;ahead is used. Smaller = the trailer follows the line more&lt;br/&gt;tightly; values that are too small make the controller&lt;br/&gt;unstable. Larger = smoother but it cuts curves and can hunt.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.50&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="109" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteTrailerLookaheadFactor">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Trailer look-ahead (x axle distance)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Look-ahead for the trailer axle as a fraction of the hitch-&lt;br/&gt;to-axle distance. The larger of this and the minimum look-&lt;br/&gt;ahead is used. Smaller = the trailer follows the line more&lt;br/&gt;tightly; values that are too small make the controller&lt;br/&gt;unstable. Larger = smoother but it cuts curves and can hunt.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.50&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="110" column="0">
+         <widget class="QLabel" name="lblRouteTrailerLookaheadMin">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Trailer look-ahead (minimum)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Smallest look-ahead distance for the trailer axle. It takes&lt;br/&gt;over for short trailers, where the factor above would give a&lt;br/&gt;very short look-ahead. Raising it makes the trailer cut&lt;br/&gt;curves more.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Trailer look-ahead (minimum)</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="110" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteTrailerLookaheadMin">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Trailer look-ahead (minimum)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Smallest look-ahead distance for the trailer axle. It takes&lt;br/&gt;over for short trailers, where the factor above would give a&lt;br/&gt;very short look-ahead. Raising it makes the trailer cut&lt;br/&gt;curves more.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>30.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>2.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="110" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteTrailerLookaheadMin">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Trailer look-ahead (minimum)&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Smallest look-ahead distance for the trailer axle. It takes&lt;br/&gt;over for short trailers, where the factor above would give a&lt;br/&gt;very short look-ahead. Raising it makes the trailer cut&lt;br/&gt;curves more.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 2.0 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="111" column="0">
+         <widget class="QLabel" name="lblRouteTrailerBetaLead">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Max. angle lead&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The wanted angle between tractor and trailer may run at most&lt;br/&gt;this far ahead of the real angle. It only matters at the&lt;br/&gt;start of tight reverse turns; on gentle routes it has no&lt;br/&gt;effect. Very low values (below about 10 degrees) slow down&lt;br/&gt;building the angle and make tight turns harder to follow.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 20 °&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Max. angle lead</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="111" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteTrailerBetaLead">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Max. angle lead&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The wanted angle between tractor and trailer may run at most&lt;br/&gt;this far ahead of the real angle. It only matters at the&lt;br/&gt;start of tight reverse turns; on gentle routes it has no&lt;br/&gt;effect. Very low values (below about 10 degrees) slow down&lt;br/&gt;building the angle and make tight turns harder to follow.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 20 °&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> °</string>
+          </property>
+          <property name="decimals">
+           <number>0</number>
+          </property>
+          <property name="minimum">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>60.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>20.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="111" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteTrailerBetaLead">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Max. angle lead&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The wanted angle between tractor and trailer may run at most&lt;br/&gt;this far ahead of the real angle. It only matters at the&lt;br/&gt;start of tight reverse turns; on gentle routes it has no&lt;br/&gt;effect. Very low values (below about 10 degrees) slow down&lt;br/&gt;building the angle and make tight turns harder to follow.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 20 °&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="112" column="0">
+         <widget class="QLabel" name="lblRouteTrailerLengthFallback">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Fallback trailer length&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Hitch-to-axle distance assumed when the trailer does not&lt;br/&gt;expose its axle points. Only used in that case.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 3.5 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Fallback trailer length</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="112" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteTrailerLengthFallback">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Fallback trailer length&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Hitch-to-axle distance assumed when the trailer does not&lt;br/&gt;expose its axle points. Only used in that case.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 3.5 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>30.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>3.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="112" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteTrailerLengthFallback">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Fallback trailer length&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Hitch-to-axle distance assumed when the trailer does not&lt;br/&gt;expose its axle points. Only used in that case.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 3.5 m&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="113" column="0">
+         <widget class="QLabel" name="lblRouteHitchBlend">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Hitch learning rate&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How quickly the hitch geometry measured while driving&lt;br/&gt;replaces the current estimate (0 to 1 per frame). Higher =&lt;br/&gt;learns faster but noisier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.40&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Hitch learning rate</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="113" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteHitchBlend">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Hitch learning rate&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How quickly the hitch geometry measured while driving&lt;br/&gt;replaces the current estimate (0 to 1 per frame). Higher =&lt;br/&gt;learns faster but noisier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.40&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.400000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="113" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteHitchBlend">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Hitch learning rate&lt;/b&gt;&lt;/p&gt;&lt;p&gt;How quickly the hitch geometry measured while driving&lt;br/&gt;replaces the current estimate (0 to 1 per frame). Higher =&lt;br/&gt;learns faster but noisier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.40&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="114" column="0">
+         <widget class="QLabel" name="lblRouteHitchMinSin">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Hitch measuring threshold&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The hitch can only be measured when tractor and trailer are&lt;br/&gt;angled to each other. Measuring starts when the sine of that&lt;br/&gt;angle exceeds this value (0.08 is about 4.6 degrees). Lower&lt;br/&gt;= measures earlier but noisier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.08&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Hitch measuring threshold</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="114" column="1">
+         <widget class="QDoubleSpinBox" name="propRouteHitchMinSin">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Hitch measuring threshold&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The hitch can only be measured when tractor and trailer are&lt;br/&gt;angled to each other. Measuring starts when the sine of that&lt;br/&gt;angle exceeds this value (0.08 is about 4.6 degrees). Lower&lt;br/&gt;= measures earlier but noisier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.08&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.080000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="114" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="hlpRouteHitchMinSin">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>WhatsThisCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Hitch measuring threshold&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The hitch can only be measured when tractor and trailer are&lt;br/&gt;angled to each other. Measuring starts when the sine of that&lt;br/&gt;angle exceeds this value (0.08 is about 4.6 degrees). Lower&lt;br/&gt;= measures earlier but noisier.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Default: 0.08&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { border: 1px solid palette(mid); border-radius: 8px; font-weight: bold; } QLabel:hover { background-color: palette(highlight); color: palette(highlighted-text); }</string>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="116" column="0" colspan="3">
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>

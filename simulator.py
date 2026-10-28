@@ -73,6 +73,10 @@ class Simulator(QObject):
     ROUTE_STALL_TIME: float = 8.0
     # Show the detected trailer geometry when a route starts
     ROUTE_SHOW_TRAILER_INFO: bool = True
+    # Braking during a route relative to the acceleration
+    ROUTE_BRAKE_FACTOR: float = 3.0
+    # NOTE: every ROUTE_* value above is only the default. When the settings dialog
+    # (QgisSweptPathDockWidgetProp) has the matching route_* property, the dialog value is used.
 
     def __init__(self, canvas: QgsMapCanvas):
         """Constructor"""
@@ -103,20 +107,33 @@ class Simulator(QObject):
         self._speed_down: bool = False
         self._brake: bool = False
         self._center_steering: bool = False
-        # Automatically return steering toward centre when no steering key is pressed.
-        # Switched by the "Auto-center steering" check box (see setAutoSteer).
-        self._auto_steer: bool = not self.STEER_HOLD_ON_RELEASE
 
         # Frames the current steering key has been held (for ramp-up)
         self._steer_hold_frames: int = 0
 
+        # Auto steering: the wheel returns to centre when no steering key is held
+        self._auto_steer: bool = not self.STEER_HOLD_ON_RELEASE
+
         # Route following state
+        self._tuning: Tuning = None
         self._route_active: bool = False
         self._pilot: Pilot = None
         self._geom: Geom = None
         self._wait_frames: int = 0
         self._stall_frames: int = 0
         self._stall_ref: tuple = (-1, -1.0)
+
+    # ------------------------------------------------------------------
+    # Settings
+    # ------------------------------------------------------------------
+    def setAutoSteer(self, enabled: bool):
+        """Auto steering on: the wheel returns to centre when no steering key is held (check box in the dock)."""
+        self._auto_steer = bool(enabled)
+
+    def _setting(self, name: str, default):
+        """Value of a route setting from the settings dialog, or the default if it has none."""
+        value = getattr(self._prop, name, None) if self._prop is not None else None
+        return default if value is None else value
 
     # ------------------------------------------------------------------
     # Key handling
@@ -218,10 +235,6 @@ class Simulator(QObject):
         self._simulation_paused = not self._simulation_paused
         return self._simulation_paused
 
-    def setAutoSteer(self, enabled: bool):
-        """Enable or disable the automatic return of the steering toward centre."""
-        self._auto_steer = bool(enabled)
-
     def speedUp(self):
         if self._prop.simulation_mode == SimulationMode.STEP_BASED:
             self.vehicle.speed_up(self._prop.speed_change_step)
@@ -291,15 +304,16 @@ class Simulator(QObject):
         if pose is None:
             return False
 
-        self._geom = Geom.from_vehicle(self._vehicle)
-        self._pilot = Pilot(self._geom, runs, Tuning())
+        self._tuning = Tuning.from_props(self._prop)
+        self._geom = Geom.from_vehicle(self._vehicle, self._tuning)
+        self._pilot = Pilot(self._geom, runs, self._tuning)
         self._pilot.start(pose[0], pose[1], pose[2], self._read_trailer())
         self._wait_frames = 0
         self._stall_frames = 0
         self._stall_ref = (-1, -1.0)
         self._route_active = True
 
-        if self._geom.trailer is not None and self.ROUTE_SHOW_TRAILER_INFO:
+        if self._geom.trailer is not None and bool(self._setting("route_show_trailer_info", self.ROUTE_SHOW_TRAILER_INFO)):
             msg = "Trailer detected: " + self._geom.trailer.describe()
             print("QgisSweptPath: " + msg)
             iface.messageBar().pushMessage("Route", msg, level=Qgis.Info, duration=5)
@@ -378,11 +392,15 @@ class Simulator(QObject):
         v = self._vehicle
         unit = self._geom.steer_unit
         max_units = v.max_steering_angle
-        target = max(-max_units, min(max_units, target_rad / unit))
+        # Vehicle.steer_left / steer_right ignore a step that would end even one rounding error beyond the
+        # limit, so never ask for exactly full lock: stop a billionth short of it.
+        limit = max_units * (1.0 - 1e-9)
+        target = max(-limit, min(limit, target_rad / unit))
         diff = target - v.steering_angle
 
-        if not self.ROUTE_STEER_INSTANT:
-            step = (max_units / self._frames_half_steering) * self.ROUTE_STEER_RATE
+        if not bool(self._setting("route_steer_instant", self.ROUTE_STEER_INSTANT)):
+            step = (max_units / self._frames_half_steering) * float(
+                self._setting("route_steer_rate", self.ROUTE_STEER_RATE))
             diff = max(-step, min(step, diff))
 
         if diff > 0.0:
@@ -410,25 +428,27 @@ class Simulator(QObject):
         if cmd.status == "cusp":
             # Stop, and keep the wheel turning to the angle needed for the next run
             self._stop_vehicle()
-            self._wait_frames = max(1, int(round(self.ROUTE_CUSP_PAUSE / dt)))
+            self._wait_frames = max(1, int(round(float(self._setting("route_cusp_pause", self.ROUTE_CUSP_PAUSE)) / dt)))
 
         # --- steering ----------------------------------------------------------
         self._set_steering(cmd.steer)
 
         # --- speed -------------------------------------------------------------
+        brake_factor = float(self._setting("route_brake_factor", self.ROUTE_BRAKE_FACTOR))
         accel_step = dt * self._prop.acceleration
-        decel = self._prop.acceleration * self.BRAKE_FACTOR
-        floor = max(self.ROUTE_MIN_SPEED, 1.5 * self._prop.minimum_speed)
+        decel = self._prop.acceleration * brake_factor
+        floor = max(float(self._setting("route_min_speed", self.ROUTE_MIN_SPEED)), 1.5 * self._prop.minimum_speed)
 
         if cmd.direction < 0:
-            cruise = getattr(self._prop, "route_reverse_speed", self.ROUTE_REVERSE_SPEED)
+            cruise = float(self._setting("route_reverse_speed", self.ROUTE_REVERSE_SPEED))
             if cmd.with_trailer:
-                cruise = min(cruise, self.ROUTE_REVERSE_SPEED_TRAILER)
+                cruise = min(cruise, float(self._setting("route_reverse_speed_trailer", self.ROUTE_REVERSE_SPEED_TRAILER)))
         else:
-            cruise = getattr(self._prop, "route_speed", self.ROUTE_CRUISE_SPEED)
+            cruise = float(self._setting("route_speed", self.ROUTE_CRUISE_SPEED))
 
+        end_tol = self._tuning.END_TOL if self._tuning is not None else 0.3
         if cmd.stops_at_end:
-            v_end = math.sqrt(2.0 * decel * max(cmd.remaining - 0.3, 0.0))
+            v_end = math.sqrt(2.0 * decel * max(cmd.remaining - end_tol, 0.0))
         else:
             v_end = cruise
 
@@ -444,7 +464,7 @@ class Simulator(QObject):
         dv = target - v.speed
         if abs(dv) > 1e-9:
             braking = v.speed * dv < 0.0
-            amount = min(abs(dv), accel_step * (self.BRAKE_FACTOR if braking else 1.0))
+            amount = min(abs(dv), accel_step * (brake_factor if braking else 1.0))
             if dv > 0.0:
                 v.speed_up(amount)
             else:
@@ -458,7 +478,7 @@ class Simulator(QObject):
             self._stall_frames = 0
         else:
             self._stall_frames += 1
-            if self._stall_frames * dt >= self.ROUTE_STALL_TIME:
+            if self._stall_frames * dt >= float(self._setting("route_stall_time", self.ROUTE_STALL_TIME)):
                 self._fail_route("The vehicle is not making progress along the route.")
 
     # ------------------------------------------------------------------
@@ -536,7 +556,7 @@ class Simulator(QObject):
             # Skip simulation if simulation is paused or canvas is drawing
             return
 
-        if self._route_active and self.ROUTE_MANUAL_OVERRIDE and (
+        if self._route_active and bool(self._setting("route_manual_override", self.ROUTE_MANUAL_OVERRIDE)) and (
                 self._steer_left or self._steer_right or self._speed_up or self._speed_down
         ):
             # Driver took over: leave route mode and drive manually
