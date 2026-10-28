@@ -3,14 +3,8 @@
 **Forward and reverse driving, with and without a trailer — how it works and how the code is wired**
 
 > **Scope.** This document describes the route-following feature as implemented in
-> `route_follow.py` (header says *VERSION 4, trailer aware*), `simulator.py`, `route_tool.py`
-> and the route/undo hooks in `qgis_swept_path.py`. Line numbers (`L123`) refer to those files as uploaded
-> in October 2026 and will drift as you edit.
->
-> **What was and was not verified.** The controller maths was tested outside QGIS against mock vehicles
-> (details in [§1.14](#114-what-has-been-validated)). `vehicle.py` itself was never visible while this was
-> written, so every assumption about it is listed in [§1.12](#112-assumptions-and-limits) and
-> [§2.2](#22-what-the-code-assumes-about-vehiclepy). None of this was observed running inside QGIS.
+> `route_follow.py`, `simulator.py`, `route_tool.py`
+> and the route/undo hooks in `qgis_swept_path.py`.
 
 ---
 
@@ -97,7 +91,7 @@ against a simple virtual vehicle.
 
 ### Conventions
 
-- Lengths are **map units**. In a metric CRS (your Irish Grid work) that is metres. Speeds are map units
+- Lengths are **map units**. Speeds are map units
   per second (the dock widget multiplies by 3.6 to show km/h, so the plugin treats them as m/s).
 - Angles are **radians**, measured **counter-clockwise from +X (east)**. This is the same as `vehicle.a`.
 - **Steering angle is positive to the left.** `steer_left()` increases it, `steer_right()` decreases it.
@@ -172,15 +166,39 @@ In route mode the wheel is **set** to the angle the controller asks for, in the 
 (`ROUTE_STEER_INSTANT = True`). This is the *stop-start assumption* you asked for: as if the driver may turn
 the wheel while standing still. Setting it to `False` turns the wheel at the same rate as manual driving.
 
-### What the real `Vehicle.step()` does
+### What `Vehicle.step()` does
 
-`vehicle.py` was not available. The controller does **not** rely on a specific `step()` model. It is a
-feedback controller: each frame it reads the *actual* `f`, `a` (and trailer state) and corrects. In testing,
-both a "distance = rear-axle travel" and a "distance = front-axle travel" mock vehicle were tracked equally
-well. The preview, however, assumes rear-axle travel (see [§1.11](#111-the-live-preview-and-why-it-matches-the-real-run)).
+Each frame the simulator calls `vehicle.step(distance)`, where `distance = dt × speed` (negative when reversing). In the plugin's `Vehicle` class, `distance` is the distance travelled by the **front axle** (point F). A steering vehicle's axles do not travel the same distance. The rear axle moves $\text{distance}\times\cos\delta$, and the heading changes by $\text{distance}\times\sin\delta / L$.
+
+| Steering angle δ | Front axle moves | Rear axle moves | Heading change per metre of `distance` |
+|---|---|---|---|
+| 0° | 1.000 | 1.000 | 0 |
+| 10° | 1.000 | 0.985 | 0.174 / L |
+| 20° | 1.000 | 0.940 | 0.342 / L |
+| 30° | 1.000 | 0.866 | 0.500 / L |
+| 34.1° (full lock of a compact van) | 1.000 | 0.829 | 0.561 / L |
+
+This is the same geometry as the bicycle model of §1.2, written per front-axle distance instead of per rear-axle distance: $\Delta\theta=\Delta s_{rear}\tan\delta/L=\Delta s_{front}\sin\delta/L$. The practical meaning is that `speed` is the front-axle speed. At full lock the rear axle moves about 17% slower, and at 20° about 6% slower.
+
+**Route following does not depend on this convention.** Every frame the controller reads the actual position (`vehicle.f`) and heading (`vehicle.a`), plus the trailer state if there is one, and steers from those. A convention that moves the vehicle slightly faster or slower changes the timing of a run, not the line it drives.
+
+**The live preview uses its own step.** `simulate()` advances a virtual vehicle in 0.1 m steps of rear-axle travel and never calls `Vehicle.step()`. The preview and the real run therefore follow the same geometric line and differ only in how far the vehicle has progressed per frame. Measured on the real `Vehicle` class:
+
+| Route | Largest gap between the preview path and the real path |
+|---|---|
+| van: forward, then reverse into a bay | 0.015 m |
+| van: reverse S-curve | 0.007 m |
+| van: forward 90° turn | 0.026 m |
+| pickup with trailer: reverse into a bay | 0.003 m |
+| pickup with trailer: reverse S-curve | 0.002 m |
+
+On a route that is too tight, the preview and the real run gave up at the same place (rear axle at (5.8, −1.5) in the preview and (5.8, −1.6) in the real run).
+
+**Trailer integration.** The `Vehicle` class advances the trailer heading with a first-order step each frame, so its trailer position differs slightly from the exact model of §1.7.1. The difference grows with the step length. After 30 m of driving at 10° of steering it was 0.145 m with 0.15 m steps, 0.073 m with 0.075 m steps and 0.019 m with 0.02 m steps. The controller measures the trailer every frame, so this does not accumulate into tracking error.
+
+**Steering requests at full lock.** `Vehicle.steer_left()` and `Vehicle.steer_right()` ignore a request that would end even one floating-point rounding error beyond `max_steering_angle`. They do not clip it. Route following therefore asks for at most $(1-10^{-9})\times$ the limit. Without this, about 1.7% of full-lock requests in a randomised test were silently ignored and the wheel stayed at its previous angle.
 
 ---
-
 ## 1.3 From mouse clicks to a path
 
 ### 1.3.1 A route is a list of *runs*
@@ -370,8 +388,6 @@ Vehicle heading 0 (nose east), R at the origin, reversing west. Look-ahead targe
 | κ_motion | −0.108 1/m |
 | **δ** | **+16.6° (steer left)** |
 
-Sanity check by thought experiment: reversing with the wheel turned left rotates the heading clockwise, so the
-rear axle drifts toward +y, which is where the target is. ✔
 
 ### Why a *short* look-ahead is used
 
@@ -383,9 +399,33 @@ turning limit were tracked to within about 0.04–0.06 m in testing (§1.14).
 
 ## 1.7 Reversing with a trailer
 
-Reversing a tractor with a trailer is the one case where the simple "aim at a look-ahead point" idea fails
-badly, and it is the reason the old controller jackknifed. This section is the longest because the physics is
-the least intuitive.
+This section specifies how route following controls a tractor with one trailer in reverse.
+
+**Scope**
+
+| Item | Specification |
+|---|---|
+| Vehicles | one tractor and one trailer; a second trailer follows passively and is not controlled |
+| Simulation mode | frame-based only |
+| Tracked point | trailer axle T (the last axle follows the drawn line) |
+| Controlled quantity | articulation angle β = θ₁ − θ₂ between tractor and trailer |
+| Forward driving | unchanged: the front-axle controller of §1.5 is used and the trailer follows (§1.7.8) |
+
+**Rule.** In reverse, a straight tractor is an unstable equilibrium for β (§1.7.2). The controller therefore regulates β
+directly with two nested loops (§1.7.4) instead of aiming the tractor at a look-ahead point as in §1.6. It also limits β
+to a safe fraction of the vehicle's bending limit (§1.7.5) and stops the run if the limit is approached (§1.7.6).
+
+| Subsection | Content |
+|---|---|
+| 1.7.1 | Kinematic model of tractor and trailer |
+| 1.7.2 | Stability of β in forward and reverse |
+| 1.7.3 | Steady-state relation between β and path curvature |
+| 1.7.4 | Cascade controller (outer path loop, inner articulation loop) |
+| 1.7.5 | Limits applied to the wanted articulation angle β\* |
+| 1.7.6 | Jackknife detection and the bending limit |
+| 1.7.7 | Estimation of the hitch geometry (c, d) |
+| 1.7.8 | Forward driving with a trailer |
+| 1.7.9 | One control step with numbers |
 
 ### 1.7.1 The kinematic model
 
@@ -416,34 +456,56 @@ $$
 This is exactly what `simulate()` integrates inside `rates()` (a second-order midpoint step), and the same
 equation the inner control loop inverts.
 
-### 1.7.2 Why a trailer jackknifes
+### 1.7.2 Stability of the articulation angle
 
-Look at the term $-\sin\beta/d$ for a **straight** tractor ($\delta=0$):
+For a straight tractor (δ = 0) the model of §1.7.1 reduces to
 
-| Direction | $d\beta/d\lvert s\rvert$ | Behaviour |
+$$
+\frac{d\beta}{ds}=-\frac{\sin\beta}{d}
+$$
+
+where *s* is the signed distance travelled by the tractor rear axle (positive when driving forward). The hitch offset *c* does not appear, because it only enters through the steering term.
+
+| Direction | $d\beta/d\lvert s\rvert$ | Behaviour near β = 0 |
 |---|---|---|
-| forward | $-\sin\beta/d \approx -\beta/d$ | β **decays**: the trailer lines up behind the tractor. Stable. |
-| reverse | $+\sin\beta/d \approx +\beta/d$ | β **grows** as $\beta_0 e^{\lvert s\rvert/d}$. Unstable. |
+| forward | $-\sin\beta/d \approx -\beta/d$ | β decays: the trailer aligns behind the tractor (stable) |
+| reverse | $+\sin\beta/d \approx +\beta/d$ | β grows (unstable) |
 
-Reversing in a straight line is an unstable equilibrium: any tiny misalignment is amplified until the trailer
-folds against the tractor. The e-folding length is the hitch-to-axle distance *d*. Measured on the real kinematics
-with d = 3.6 m, start β₀ = 2°, steering held straight:
+**Solution.** With a constant straight tractor the equation has the closed-form solution
 
-| Reversed distance | 3 m | 6 m | 9 m | 12 m |
+$$
+\tan\frac{\beta}{2}=\tan\frac{\beta_0}{2}\,e^{\pm\lvert s\rvert/d}
+$$
+
+with + for reverse and − for forward. For small angles this is $\beta\approx\beta_0\,e^{\pm\lvert s\rvert/d}$, so the length constant is the hitch-to-axle distance *d*. In reverse the fully folded state β = ±180° is also an equilibrium and is stable. In practice it is never reached, because the vehicle's bending limit (§1.7.6) stops the motion first.
+
+**Growth of β from β₀ = 2° (d = 3.6 m, δ = 0)**
+
+| Distance travelled | 3 m | 6 m | 9 m | 12 m |
 |---|---|---|---|---|
-| β, reversing | 4.6° | 10.5° | 23.9° | 51.9° |
-| β, same start driving **forward** 12 m | | | | 0.07° |
+| β, reversing | 4.60° | 10.56° | 24.01° | 52.14° |
+| β, reversing, small-angle approximation | 4.60° | 10.59° | 24.36° | 56.06° |
+| β, driving forward | 0.87° | 0.38° | 0.16° | 0.07° |
 
-The linear prediction $2^\circ\cdot e^{6/3.6}=10.6^\circ$ at 6 m matches the simulation (10.5°).
+Values are computed from the closed-form solution above. A numerical integration with 0.01 m steps agrees to within 0.2°. The small-angle approximation is accurate only while β stays small.
 
-**The old controller ignored the trailer.** It steered the tractor as if alone; on a simulated pickup + trailer
-a straight reverse was fine but every curve jackknifed within about 6–8 m. The fix is not "steer more
-carefully", it is to control β actively.
+**Distance for β to grow tenfold in reverse** ($d\ln 10$, small angles)
 
-**Why a single look-ahead loop is not enough.** From the steering angle to the trailer axle's sideways position
-there are three integrations in a row: δ sets $\dot\beta$, β sets $\dot\theta_2$, θ₂ sets the lateral velocity of T.
-A controller that closes one loop around the end of such a chain oscillates or diverges. The solution below is a
-cascade: a fast inner loop that tames β, and a slower outer loop that picks the β needed to follow the path.
+| d (hitch to trailer axle) | 2.4 m | 3.6 m | 5.5 m |
+|---|---|---|---|
+| distance | 5.5 m | 8.3 m | 12.7 m |
+
+**Consequences for the controller**
+
+- In reverse, any non-zero β grows until the bending limit is reached. A reverse run therefore requires continuous regulation of β, not only of the trailer position.
+- Driving forward, β decays on its own. Forward runs need no articulation control (§1.7.8).
+- From the steering angle to the lateral position of the trailer axle T there are three integrators in series: δ → $\dot\beta$, β → $\dot\theta_2$, θ₂ → lateral velocity of T. (For c ≠ 0, δ also enters $\dot\theta_2$ directly.) The controller therefore regulates β first, with an inner loop, and the path second, with an outer loop (§1.7.4).
+
+> **Further reading.** `[R11]` models a reversing truck and trailer as an **unstable** nonlinear system with state and input
+> saturations, and shows that some initial states lead to jack-knife locks. `[R13]` states that reversing a semitrailer
+> requires considerable skill and that problems occur even when reversing straight backwards. `[R17]` (preprint) combines
+> a lateral control law at trailer level with a short-horizon adjustment of the tractor steering angle, for forward and
+> backward motion. The closed-form solution and the tables above are derived here from the model of §1.7.1.
 
 ### 1.7.3 What articulation angle does a given curve need?
 
@@ -766,13 +828,13 @@ and at the end.
 
 | Visual | Meaning | Source |
 |---|---|---|
-| grey dashed line | the points you clicked | `_draw_guide` |
-| **orange** line | front-axle path of forward runs | `_draw_paths` |
-| **blue** line | rear-axle path of reverse runs; with a trailer the **trailer axle** | `_draw_paths` |
-| shaded area, dark edge | swept area; the edge is the outer line of the body (and trailer) | `_draw_envelope` |
-| black outlines | vehicle at start, every cusp and the end | `_draw_ghosts` |
-| **red** line + red outline | the part the vehicle cannot follow, and where it gave up | `_draw_failure` |
-| status bar | direction, and with a trailer the maximum β against the limit; or the failure reason | `_refresh` |
+| grey dashed line | the points you clicked | `RouteTool._draw_guide` |
+| **orange** line | front-axle path of forward runs | `RouteTool._draw_paths` |
+| **blue** line | rear-axle path of reverse runs; with a trailer the **trailer axle** | `RouteTool._draw_paths` |
+| shaded area, dark edge | swept area; the edge is the outer line of the body (and trailer) | `RouteTool._draw_envelope` |
+| black outlines | vehicle at start, every cusp and the end | `RouteTool._draw_ghosts` |
+| **red** line + red outline | the part the vehicle cannot follow, and where it gave up | `RouteTool._draw_failure` |
+| status bar | direction, and with a trailer the maximum β against the limit; or the failure reason | `RouteTool._refresh` |
 
 **Swept area.** Body outlines (tractor + trailer) are taken every 0.3 m along the simulated track while the mouse
 moves, every 0.12 m after a click, and never more than 450 outlines; they are merged with
@@ -809,11 +871,6 @@ reads what was learned. On mock vehicles the two tracks agreed to **0.10 m**.
 - When reversing with a trailer, **draw the line behind the trailer axle**, because that is the point that follows
   it. The first click is measured from the trailer axle, not from the tractor.
 
-**Not validated**
-
-- Nothing was observed running inside QGIS; `vehicle.py` and the trailer vehicle files were not available.
-- The names the code reads from your vehicles (§2.2) are partly inferred from `minivan.py` and from how
-  `qgis_swept_path.py` builds its path points.
 
 ---
 
@@ -1162,48 +1219,50 @@ classDiagram
 
 ## 2.5 route_follow.py reference
 
+Entries are identified by name (`Class.method`, or the function name for module-level functions) so that they stay valid when the files change.
+
 ### 2.5.1 Module-level helpers
 
-| Function | Line | What it does | Returns |
-|---|---|---|---|
-| `wrap_pi(a)` | L72 | Wraps an angle into [−π, π). Used for every angle difference. | float |
-| `_num(obj, names, default)` | L79 | First attribute in `names` that exists and is numeric (calls it if it is a method). Skips `bool`. | float or `default` |
-| `_pt(p)` | L92 | `(x, y)` of a point-like object, whether `x`/`y` are attributes or methods. | tuple or `None` |
-| `_axle_mid(part, left, right)` | L103 | Midpoint of two named point attributes (e.g. `"rwl"`, `"rwr"`). | tuple or `None` |
-| `find_trailer(v)` | L119 | The trailer part (§2.2). | part or `None` |
-| `estimate_hitch(R, th1, T, th2)` | L133 | Intersects the two centre lines. `det = sin(θ₁−θ₂)`; returns `None` if `abs(det) < 0.05` or if `d` is outside 0.3–25 m or `c` outside −4–8 m. | `(c, d)` or `None` |
-| `read_articulation(v, geom)` | L154 | Reads current trailer state: `{R, th1, T, th2, H, tr}`. | dict or `None` |
-| `_local_outline(tr, T, th2)` | L177 | Trailer body corners expressed in the trailer's own frame (origin T, +x forward). | list or `None` |
-| `_find_limit(tr, v, default)` | L186 | Bending-limit lookup (§1.7.6), degrees converted, capped at 90°. | radians |
-| `chaikin(pts, iterations)` | L374 | Corner cutting (§1.3.4). Keeps end points. Fewer than 3 points → unchanged. | list |
-| `resample(pts, spacing)` | L387 | Uniform arc-length resampling, last point kept. Degenerate (zero length) input → first point twice. | list |
-| `beta_from_curvature(k2, c, d)` | L502 | β for a steady turn of curvature κ₂ (§1.7.3). | radians |
-| `beta_steering_limit(L, c, d, max_steer)` | L514 | Largest β the steering can hold; scans 0.5° steps up to 90°, stops at the first failure. | radians |
+| Function | What it does | Returns |
+|---|---|---|
+| `wrap_pi(a)` | Wraps an angle into [−π, π). Used for every angle difference. | float |
+| `_num(obj, names, default)` | First attribute in `names` that exists and is numeric (calls it if it is a method). Skips `bool`. | float or `default` |
+| `_pt(p)` | `(x, y)` of a point-like object, whether `x`/`y` are attributes or methods. | tuple or `None` |
+| `_axle_mid(part, left, right)` | Midpoint of two named point attributes (e.g. `"rwl"`, `"rwr"`). | tuple or `None` |
+| `find_trailer(v)` | The trailer part (§2.2). | part or `None` |
+| `estimate_hitch(R, th1, T, th2)` | Intersects the two centre lines. `det = sin(θ₁−θ₂)`; returns `None` if `abs(det) < 0.05` or if `d` is outside 0.3–25 m or `c` outside −4–8 m. | `(c, d)` or `None` |
+| `read_articulation(v, geom)` | Reads current trailer state: `{R, th1, T, th2, H, tr}`. | dict or `None` |
+| `_local_outline(tr, T, th2)` | Trailer body corners expressed in the trailer's own frame (origin T, +x forward). | list or `None` |
+| `_find_limit(tr, v, default)` | Bending-limit lookup (§1.7.6), degrees converted, capped at 90°. | radians |
+| `chaikin(pts, iterations)` | Corner cutting (§1.3.4). Keeps end points. Fewer than 3 points → unchanged. | list |
+| `resample(pts, spacing)` | Uniform arc-length resampling, last point kept. Degenerate (zero length) input → first point twice. | list |
+| `beta_from_curvature(k2, c, d)` | β for a steady turn of curvature κ₂ (§1.7.3). | radians |
+| `beta_steering_limit(L, c, d, max_steer)` | Largest β the steering can hold; scans 0.5° steps up to 90°, stops at the first failure. | radians |
 
 ### 2.5.2 `Geom` and `TrailerGeom`
 
-| Method | Line | Behaviour |
-|---|---|---|
-| `Geom.from_vehicle(v)` | L314 | Reads geometry (§2.2). Converts degrees to radians when lock > 1.6. Then tries `TrailerGeom.from_vehicle` inside `try/except`; any failure just means "no trailer". Called by `Simulator.setRoute` and `RouteTool.activate`. |
-| `Geom.rear_from_front(fx, fy, th)` | L349 | R = F − L·(cos θ, sin θ). |
-| `Geom.front_from_rear(rx, ry, th)` | L352 | F = R + L·(cos θ, sin θ). |
-| `Geom.outline(rx, ry, th)` | L355 | Four body corners (front-left, front-right, rear-right, rear-left) from the **rear-axle** pose, using `front_over`, `rear_over`, `width`. |
-| `Geom.trailer_outline(rx, ry, th1, th2)` | L366 | Trailer corners in the world frame: computes T with `axle_from`, then `outline_world`. |
-| `TrailerGeom.from_vehicle(v, geom, tuning)` | L210 | Builds c, d (cache → estimate → trailer.f → fallback, §1.7.7), the local outline (or a default box) and the bending limit. |
-| `TrailerGeom.set_hitch(c, d)` | L263 | Stores c, d and writes them into the weak cache (key = trailer part). |
-| `TrailerGeom.sync()` | L273 | Reads the cache back. Called by `RouteTool._refresh` so the preview uses what the real run learned. |
-| `TrailerGeom.axle_from(rx, ry, th1, th2)` | L283 | T = R − c·u₁ − d·u₂. |
-| `TrailerGeom.outline_world(tx, ty, th2)` | L288 | Rotates and translates the local outline. |
-| `TrailerGeom.describe()` | L292 | The text of the "Trailer detected: …" message. |
+| Method | Behaviour |
+|---|---|
+| `Geom.from_vehicle(v)` | Reads geometry (§2.2). Converts degrees to radians when lock > 1.6. Then tries `TrailerGeom.from_vehicle` inside `try/except`; any failure just means "no trailer". Called by `Simulator.setRoute` and `RouteTool.activate`. |
+| `Geom.rear_from_front(fx, fy, th)` | R = F − L·(cos θ, sin θ). |
+| `Geom.front_from_rear(rx, ry, th)` | F = R + L·(cos θ, sin θ). |
+| `Geom.outline(rx, ry, th)` | Four body corners (front-left, front-right, rear-right, rear-left) from the **rear-axle** pose, using `front_over`, `rear_over`, `width`. |
+| `Geom.trailer_outline(rx, ry, th1, th2)` | Trailer corners in the world frame: computes T with `axle_from`, then `outline_world`. |
+| `TrailerGeom.from_vehicle(v, geom, tuning)` | Builds c, d (cache → estimate → trailer.f → fallback, §1.7.7), the local outline (or a default box) and the bending limit. |
+| `TrailerGeom.set_hitch(c, d)` | Stores c, d and writes them into the weak cache (key = trailer part). |
+| `TrailerGeom.sync()` | Reads the cache back. Called by `RouteTool._refresh` so the preview uses what the real run learned. |
+| `TrailerGeom.axle_from(rx, ry, th1, th2)` | T = R − c·u₁ − d·u₂. |
+| `TrailerGeom.outline_world(tx, ty, th2)` | Rotates and translates the local outline. |
+| `TrailerGeom.describe()` | The text of the "Trailer detected: …" message. |
 
 ### 2.5.3 `Path`
 
-| Method | Line | Behaviour |
-|---|---|---|
-| `Path(pts)` | L413 | Computes `s`, `phi`, `kappa` (§1.3.6). |
-| `locate(x, y, k0, window)` | L443 | Monotone nearest-point search from index `k0` over `window` points, then projection onto the two adjacent segments (§1.3.7). Returns a `Loc`. |
-| `point_at(s_target)` | L482 | Path point at arc length `s_target` (first point at or beyond it); beyond the end it extrapolates straight along the last segment. |
-| `max_curvature(k, look, spacing)` | L493 | Largest `abs(kappa)` over the next `look / spacing` points. |
+| Method | Behaviour |
+|---|---|
+| `Path.__init__(pts)` | Computes `s`, `phi`, `kappa` (§1.3.6). |
+| `Path.locate(x, y, k0, window)` | Monotone nearest-point search from index `k0` over `window` points, then projection onto the two adjacent segments (§1.3.7). Returns a `Loc`. |
+| `Path.point_at(s_target)` | Path point at arc length `s_target` (first point at or beyond it); beyond the end it extrapolates straight along the last segment. |
+| `Path.max_curvature(k, look, spacing)` | Largest `abs(kappa)` over the next `look / spacing` points. |
 
 ### 2.5.4 `Pilot`
 
@@ -1211,19 +1270,19 @@ State kept between frames: `i` (current run), `path`, `k` (index into the path),
 off the path), `_last` (previous F), `_tr_run` (is the current run a trailer reverse), `_cap_key` / `_cap` (cached
 articulation cap).
 
-| Method | Line | Behaviour |
-|---|---|---|
-| `Pilot(geom, runs, tuning, refine)` | L558 | Stores inputs. `refine=True` (real run) re-learns the hitch each frame; the preview passes `False`. |
-| `start(fx, fy, th, art)` | L572 | Resets `_last` and activates run 0. |
-| `_has_trailer(art)` | L577 | `geom.trailer is not None and art is not None`. |
-| `_activate(index, fx, fy, th, art)` | L580 | Builds the run's `Path`: chooses the anchor (F, R or T), adds the lead-in, Chaikin, resample. Sets `i`, `_tr_run`, `path`, `k = 0`, `off = 0`. |
-| `_tracked_point(fx, fy, th, art)` | L613 | F (forward), T (reverse with trailer) or R (reverse). |
-| `_locate(fx, fy, th, art)` | L621 | `path.locate` for the tracked point, updates `k`, returns `(Loc, remaining)`. |
-| `_refine_hitch(th, art)` | L627 | If `abs(sin(th − th2)) ≥ HITCH_MIN_SINBETA`, estimates the hitch and blends it in with `HITCH_BLEND`. |
-| `_angle_cap()` | L640 | `TRAILER_SAFETY × min(limit, beta_steering_limit(...))`, recomputed only when c or d (rounded to 0.01) change. |
-| `update(fx, fy, th, art)` | L651 | **The per-frame entry point**, flow below. |
-| `_command(...)` | L678 | Chooses the control law, clips the steering, computes `v_curve`, runs the off-route accounting. |
-| `_reverse_with_trailer(cmd, th, art, loc)` | L723 | The cascade of §1.7.4. Fills `cmd.beta`, `cmd.beta_target`, may set `cmd.status = "fail"`, returns δ in radians. |
+| Method | Behaviour |
+|---|---|
+| `Pilot.__init__(geom, runs, tuning, refine)` | Stores inputs. `refine=True` (real run) re-learns the hitch each frame; the preview passes `False`. |
+| `Pilot.start(fx, fy, th, art)` | Resets `_last` and activates run 0. |
+| `Pilot._has_trailer(art)` | `geom.trailer is not None and art is not None`. |
+| `Pilot._activate(index, fx, fy, th, art)` | Builds the run's `Path`: chooses the anchor (F, R or T), adds the lead-in, Chaikin, resample. Sets `i`, `_tr_run`, `path`, `k = 0`, `off = 0`. |
+| `Pilot._tracked_point(fx, fy, th, art)` | F (forward), T (reverse with trailer) or R (reverse). |
+| `Pilot._locate(fx, fy, th, art)` | `path.locate` for the tracked point, updates `k`, returns `(Loc, remaining)`. |
+| `Pilot._refine_hitch(th, art)` | If `abs(sin(th − th2)) ≥ HITCH_MIN_SINBETA`, estimates the hitch and blends it in with `HITCH_BLEND`. |
+| `Pilot._angle_cap()` | `TRAILER_SAFETY × min(limit, beta_steering_limit(...))`, recomputed only when c or d (rounded to 0.01) change. |
+| `Pilot.update(fx, fy, th, art)` | **The per-frame entry point**, flow below. |
+| `Pilot._command(...)` | Chooses the control law, clips the steering, computes `v_curve`, runs the off-route accounting. |
+| `Pilot._reverse_with_trailer(cmd, th, art, loc)` | The cascade of §1.7.4. Fills `cmd.beta`, `cmd.beta_target`, may set `cmd.status = "fail"`, returns δ in radians. |
 
 #### `Pilot.update`
 
@@ -1273,7 +1332,7 @@ flowchart TD
 
 ### 2.5.5 `simulate`
 
-`simulate(geom, fx, fy, th, runs, step=0.1, tuning=None, th2=None)` — L773.
+`simulate(geom, fx, fy, th, runs, step=0.1, tuning=None, th2=None)` (module-level function in `route_follow.py`).
 
 ```mermaid
 flowchart TD
@@ -1316,22 +1375,22 @@ progress)` at the last time progress was made).
 
 ### Methods
 
-| Method | Line | Behaviour |
-|---|---|---|
-| `route_active` (property) | L238 | `_route_active`. |
-| `_normalize_runs(route)` (static) | L242 | Accepts `[(points, dir), ...]` or a plain list of points. Converts `QgsPointXY` (callable `x()`) or tuples to floats, drops consecutive duplicates, maps `dir` to ±1, drops empty runs. |
-| `setRoute(route)` | L269 | Normalises; warns and returns `False` if there are no runs or no vehicle; reads the pose; builds `Geom.from_vehicle`, `Pilot(geom, runs, Tuning())`; `pilot.start(F, θ, art)`; resets the wait/stall counters; sets `_route_active`; shows the "Trailer detected" message. Does **not** need the timer (`dt` is only used per frame). |
-| `_clear_route()` | L301 | Deactivates and drops the pilot. |
-| `cancelRoute()` | L306 | If active: clear and emit `routeEnded(False)`. Called by `stopSimulation()` and by manual override. |
-| `_stop_vehicle()` | L313 | Brings the signed speed to exactly 0 using `speed_down` / `speed_up`. |
-| `_finish_route()` | L321 | `_stop_vehicle`, clear, emit `routeEnded(True)`. |
-| `_fail_route(reason)` | L326 | `_stop_vehicle`, clear, emit `routeFailed(reason)`. |
-| `_read_pose()` | L334 | `(f.x, f.y, a)` as floats, or a critical message and `None`. **First place to edit if your vehicle names things differently.** |
-| `_read_trailer()` | L350 | The `art` tuple or `None` (also `None` when `_geom.trailer` is `None`). If the trailer axle points are missing it reconstructs T with `axle_from`. |
-| `_set_steering(target_rad)` | L369 | Converts radians to vehicle units (`/ steer_unit`), clips to ±`max_steering_angle`, then calls `steer_left` or `steer_right` with the difference. With `ROUTE_STEER_INSTANT = False` the difference is limited per frame to `max_steering_angle / frames_half_steering × ROUTE_STEER_RATE`. |
-| `_update_route_control()` | L386 | The per-frame route logic (flow below). |
-| `_simulate_frame()` | L527 | The timer callback (flow below). |
-| `startSimulation()` / `stopSimulation()` | L169 / L192 | Frame mode computes `_frames_half_steering = steering_time × 0.5 × frames` and `dt = 1 / frames`, then starts the `QTimer`. `stopSimulation` also calls `cancelRoute()` and clears the key flags. |
+| Method | Behaviour |
+|---|---|
+| `Simulator.route_active` (property) | `_route_active`. |
+| `Simulator._normalize_runs(route)` (static) | Accepts `[(points, dir), ...]` or a plain list of points. Converts `QgsPointXY` (callable `x()`) or tuples to floats, drops consecutive duplicates, maps `dir` to ±1, drops empty runs. |
+| `Simulator.setRoute(route)` | Normalises; warns and returns `False` if there are no runs or no vehicle; reads the pose; builds `Geom.from_vehicle`, `Pilot(geom, runs, Tuning())`; `pilot.start(F, θ, art)`; resets the wait/stall counters; sets `_route_active`; shows the "Trailer detected" message. Does **not** need the timer (`dt` is only used per frame). |
+| `Simulator._clear_route()` | Deactivates and drops the pilot. |
+| `Simulator.cancelRoute()` | If active: clear and emit `routeEnded(False)`. Called by `stopSimulation()` and by manual override. |
+| `Simulator._stop_vehicle()` | Brings the signed speed to exactly 0 using `speed_down` / `speed_up`. |
+| `Simulator._finish_route()` | `_stop_vehicle`, clear, emit `routeEnded(True)`. |
+| `Simulator._fail_route(reason)` | `_stop_vehicle`, clear, emit `routeFailed(reason)`. |
+| `Simulator._read_pose()` | `(f.x, f.y, a)` as floats, or a critical message and `None`. **First place to edit if your vehicle names things differently.** |
+| `Simulator._read_trailer()` | The `art` tuple or `None` (also `None` when `_geom.trailer` is `None`). If the trailer axle points are missing it reconstructs T with `axle_from`. |
+| `Simulator._set_steering(target_rad)` | Converts radians to vehicle units (`/ steer_unit`), clips to ±`max_steering_angle`, then calls `steer_left` or `steer_right` with the difference. With `ROUTE_STEER_INSTANT = False` the difference is limited per frame to `max_steering_angle / frames_half_steering × ROUTE_STEER_RATE`. |
+| `Simulator._update_route_control()` | The per-frame route logic (flow below). |
+| `Simulator._simulate_frame()` | The timer callback (flow below). |
+| `Simulator.startSimulation()` / `Simulator.stopSimulation()` | Frame mode computes `_frames_half_steering = steering_time × 0.5 × frames` and `dt = 1 / frames`, then starts the `QTimer`. `stopSimulation` also calls `cancelRoute()` and clears the key flags. |
 
 #### `_update_route_control`
 
@@ -1399,7 +1458,7 @@ skipped while a route is active.
 
 ## 2.7 route_tool.py reference
 
-`RouteTool(canvas, vehicle_getter)` — L24. `vehicle_getter` is `lambda: self.vehicle` from the plugin; without it
+`RouteTool(canvas, vehicle_getter)` (class in `route_tool.py`). `vehicle_getter` is `lambda: self.vehicle` from the plugin; without it
 the tool has no preview.
 
 ### State
@@ -1416,25 +1475,25 @@ the tool has no preview.
 
 ### Methods
 
-| Method | Line | Behaviour |
-|---|---|---|
-| `__init__` | L64 | Creates the rubber bands and the cross-hair cursor. |
-| `_make_band(...)` | L95 | One `QgsRubberBand` with stroke, optional fill, width, line style. |
-| `activate()` | L109 | `reset()`, builds `Geom.from_vehicle` (so **a vehicle change is picked up on the next activation**), shows the help message, first `_refresh(fine=True)`. |
-| `deactivate()` | L123 | Clears the bands **unless the route is finished** (so the preview stays while the vehicle drives). |
-| `reset()` / `_clear_bands()` | L129 / L139 | Back to one empty forward run, clear everything. |
-| `_vehicle()` | L144 | Calls the getter; returns `None` if the vehicle or `v.f` is missing. |
-| `direction` (property) | L156 | Direction of the current (last) run. |
-| `_add_part(band, pts, part)` | L163 | Adds a polyline to a rubber band as part `part`. |
-| `_refresh(cursor, fine)` | L168 | **The preview pipeline** (below). |
-| `_draw_guide`, `_draw_paths`, `_draw_envelope`, `_draw_ghosts`, `_draw_failure` | L220–L337 | One painter per visual (§1.11). |
-| `_tracked(rx, ry, th, th2, d)` | L233 | The point that follows the line: F forward; trailer axle or R in reverse. |
-| `_bodies(rx, ry, th, th2)` | L262 | Tractor outline plus trailer outline if any. |
-| `_add_point(pt, px)` | L339 | Ignores clicks closer than `DUPLICATE_PIXELS` to the previous one. |
-| `_toggle_direction()` | L348 | R key logic (table below). |
-| `_finish()` | L361 | Builds `[(points, dir), ...]` from non-empty runs; warns if none; sets `_finished`; final fine refresh; warns if part is red; emits `routeFinished`. |
-| `canvasPressEvent` / `canvasMoveEvent` / `canvasReleaseEvent` | L383 / L393 / L406 | Left press adds a point and starts dragging; right press finishes; moves add freehand points (at least `FREEHAND_MIN_PIXELS` apart) and refresh at most every `PREVIEW_INTERVAL`; release ends dragging and refreshes fine. |
-| `keyPressEvent` | L412 | Esc (reset, `routeCancelled`), R (toggle), Backspace (undo point), Enter (finish). |
+| Method | Behaviour |
+|---|---|
+| `RouteTool.__init__` | Creates the rubber bands and the cross-hair cursor. |
+| `RouteTool._make_band(...)` | One `QgsRubberBand` with stroke, optional fill, width, line style. |
+| `RouteTool.activate()` | `reset()`, builds `Geom.from_vehicle` (so **a vehicle change is picked up on the next activation**), shows the help message, first `_refresh(fine=True)`. |
+| `RouteTool.deactivate()` | Clears the bands **unless the route is finished** (so the preview stays while the vehicle drives). |
+| `RouteTool.reset()` / `RouteTool._clear_bands()` | Back to one empty forward run, clear everything. |
+| `RouteTool._vehicle()` | Calls the getter; returns `None` if the vehicle or `v.f` is missing. |
+| `RouteTool.direction` (property) | Direction of the current (last) run. |
+| `RouteTool._add_part(band, pts, part)` | Adds a polyline to a rubber band as part `part`. |
+| `RouteTool._refresh(cursor, fine)` | **The preview pipeline** (below). |
+| `RouteTool._draw_guide`, `RouteTool._draw_paths`, `RouteTool._draw_envelope`, `RouteTool._draw_ghosts`, `RouteTool._draw_failure` | One painter per visual (§1.11). |
+| `RouteTool._tracked(rx, ry, th, th2, d)` | The point that follows the line: F forward; trailer axle or R in reverse. |
+| `RouteTool._bodies(rx, ry, th, th2)` | Tractor outline plus trailer outline if any. |
+| `RouteTool._add_point(pt, px)` | Ignores clicks closer than `DUPLICATE_PIXELS` to the previous one. |
+| `RouteTool._toggle_direction()` | R key logic (table below). |
+| `RouteTool._finish()` | Builds `[(points, dir), ...]` from non-empty runs; warns if none; sets `_finished`; final fine refresh; warns if part is red; emits `routeFinished`. |
+| `RouteTool.canvasPressEvent` / `RouteTool.canvasMoveEvent` / `RouteTool.canvasReleaseEvent` | Left press adds a point and starts dragging; right press finishes; moves add freehand points (at least `FREEHAND_MIN_PIXELS` apart) and refresh at most every `PREVIEW_INTERVAL`; release ends dragging and refreshes fine. |
+| `RouteTool.keyPressEvent` | Esc (reset, `routeCancelled`), R (toggle), Backspace (undo point), Enter (finish). |
 
 **R key logic (`_toggle_direction`):**
 
@@ -1482,20 +1541,20 @@ stateDiagram-v2
 
 ## 2.8 qgis_swept_path.py glue
 
-| Code | Line | Role in route following |
-|---|---|---|
-| `RouteTool(self.canvas, lambda: self.vehicle)` and the two `connect` calls | L96–L98 | Creates the tool **once in `__init__`**, with a getter so it always sees the current vehicle; connects `routeFinished` and `routeCancelled`. |
-| `self.simulator.routeEnded.connect(...)`, `routeFailed.connect(...)` | L149–L150 | Done in `run()` because the `Simulator` is created there (and destroyed in `onClosePlugin`). |
-| `setupControls()` → `add_action("Draw route", self._draw_route, ..., shortcut="Ctrl+Shift+R")` | L218 ff. | The menu/toolbar action. |
-| `_draw_route()` | L170 | Guards: simulator exists, vehicle placed (`is_placed`), `FRAME_BASED` mode; then `canvas.setMapTool(self._route_tool)`. |
-| `_restore_tool()` | L185 | `iface.actionPan().trigger()` (the same approach used after placing a vehicle). |
-| `_on_route_drawn(points)` | L189 | Restores Pan; sets `simulator.vehicle` and `properties`; `simulator.setRoute(points)`; if the simulation is not running calls the plugin's own `startSimulation()` (layers, buttons, undo snapshot, key filter) and, if that failed, `cancelRoute()`; focuses the canvas so key presses reach the simulator. |
-| `_on_route_cancelled()` | L210 | Restores Pan. |
-| `_on_route_ended(completed)` | L213 | Resets the tool (clears the preview). If `completed` and still running → plugin `stopSimulation()` (writes the swept path, commits the undo entry). |
-| `_on_route_failed(reason)` | L899 | Resets the tool; stops the simulation if running; shows a bar message *"Route not possible"* with an **Undo run** button. |
-| `_undo_from_message(item)` | L913 | Runs `undo_last_run()` and removes the bar message. |
-| `startSimulation()` → `_begin_undo_entry()` | L580 / L827 | Snapshot of the vehicle **before** the run. |
-| `stopSimulation()` → `_commit_undo_entry(...)` | L554 / L837 | Stores the written path feature ids with the snapshot. |
+| Code | Role in route following |
+|---|---|
+| `QgisSweptPath.__init__`: `RouteTool(self.canvas, lambda: self.vehicle)` and the two `connect` calls | Creates the tool **once in `__init__`**, with a getter so it always sees the current vehicle; connects `routeFinished` and `routeCancelled`. |
+| `QgisSweptPath.run`: `self.simulator.routeEnded.connect(...)`, `routeFailed.connect(...)` | Done in `run()` because the `Simulator` is created there (and destroyed in `onClosePlugin`). |
+| `QgisSweptPath.setupControls`: `add_action("Draw route", self._draw_route, ..., shortcut="Ctrl+Shift+R")` | The menu/toolbar action. |
+| `QgisSweptPath._draw_route()` | Guards: simulator exists, vehicle placed (`is_placed`), `FRAME_BASED` mode; then `canvas.setMapTool(self._route_tool)`. |
+| `QgisSweptPath._restore_tool()` | `iface.actionPan().trigger()` (the same approach used after placing a vehicle). |
+| `QgisSweptPath._on_route_drawn(points)` | Restores Pan; sets `simulator.vehicle` and `properties`; `simulator.setRoute(points)`; if the simulation is not running calls the plugin's own `startSimulation()` (layers, buttons, undo snapshot, key filter) and, if that failed, `cancelRoute()`; focuses the canvas so key presses reach the simulator. |
+| `QgisSweptPath._on_route_cancelled()` | Restores Pan. |
+| `QgisSweptPath._on_route_ended(completed)` | Resets the tool (clears the preview). If `completed` and still running → plugin `stopSimulation()` (writes the swept path, commits the undo entry). |
+| `QgisSweptPath._on_route_failed(reason)` | Resets the tool; stops the simulation if running; shows a bar message *"Route not possible"* with an **Undo run** button. |
+| `QgisSweptPath._undo_from_message(item)` | Runs `undo_last_run()` and removes the bar message. |
+| `QgisSweptPath.startSimulation()` → `QgisSweptPath._begin_undo_entry()` | Snapshot of the vehicle **before** the run. |
+| `QgisSweptPath.stopSimulation()` → `QgisSweptPath._commit_undo_entry(...)` | Stores the written path feature ids with the snapshot. |
 
 **Order matters in `_on_route_drawn`:** `setRoute()` is called *before* `startSimulation()`. That is fine because
 `setRoute()` only needs the vehicle pose and geometry; the frame period is first needed on the first tick.
@@ -1585,9 +1644,6 @@ inner-loop evaluation with real numbers.
 
 ## 2.11 Cookbook: where to change what
 
-> **After editing any of these files, restart QGIS.** The Plugin Reloader only reloads the plugin's main module,
-> not `route_follow.py`, `simulator.py` or `route_tool.py` (a stale `vehicle_state.py` caused exactly this earlier).
-
 | I want to… | Change | Where |
 |---|---|---|
 | …the wheel to turn at a limited rate in route mode | `ROUTE_STEER_INSTANT = False` (and `ROUTE_STEER_RATE`) | `simulator.py` |
@@ -1614,15 +1670,15 @@ inner-loop evaluation with real numbers.
 
 | Message | Source | Meaning |
 |---|---|---|
-| *Draw route: The vehicle must first be created and placed.* | `_draw_route` | create and place a vehicle first |
-| *Draw route: Route following needs the frame based simulation mode.* | `_draw_route` | set simulation mode to frame based in the properties |
+| *Draw route: The vehicle must first be created and placed.* | `QgisSweptPath._draw_route` | create and place a vehicle first |
+| *Draw route: Route following needs the frame based simulation mode.* | `QgisSweptPath._draw_route` | set simulation mode to frame based in the properties |
 | *Draw route: Click at least one point.* | `RouteTool._finish` | finished with nothing drawn |
 | *Draw route: Part of this route can't be driven (shown in red)…* | `RouteTool._finish` | the preview marked a failure; the vehicle will stop there |
 | *Route: A route needs at least one point* | `Simulator.setRoute` | empty route or no vehicle |
 | *Route following: Can't read the vehicle position/heading (expected vehicle.f.x, vehicle.f.y, vehicle.a).* | `Simulator._read_pose` | your vehicle does not expose these names |
 | *Route: Trailer detected: hitch X m behind the rear axle, trailer axle Y m behind the hitch, bending limit Z deg* | `Simulator.setRoute` | the geometry the controller will use; **check these numbers** |
 | *Route not possible: The vehicle can't stay on the route (it is X m off the line)…* | `Pilot._command` | off-route detector; "trailer" instead of "vehicle" when reversing with a trailer |
-| *Route not possible: The trailer would jackknife (…)* | `_reverse_with_trailer` | articulation reached 0.97 × the limit |
+| *Route not possible: The trailer would jackknife (…)* | `Pilot._reverse_with_trailer` | articulation reached 0.97 × the limit |
 | *Route not possible: The vehicle is not making progress along the route.* | `Simulator` stall check | no progress for 8 s |
 | status bar: *Route direction: FORWARD/REVERSE, then \| max trailer angle … (limit …)* | `RouteTool._refresh` | normal preview information |
 | status bar: *Route not possible from the red part: …* | `RouteTool._refresh` | the preview's failure reason |
@@ -1690,11 +1746,11 @@ $\beta^*\leftarrow\beta+\operatorname{clip}(\beta^*-\beta,\pm20^\circ)$, cap $=0
 `route_follow.py` also contains the helpers behind **Undo run**. They are not part of route following itself but share
 the file:
 
-| Function | Line | Behaviour |
-|---|---|---|
-| `capture_vehicle_state(vehicle)` | L918 | Deep-copies every attribute of the vehicle and of each part in `vehicle_parts`. References between parts (trailer, parent, `vehicle_parts`) are kept pointing at the **original** objects via a pre-filled copy memo, so shared points stay shared. Un-copyable attributes (locks, some Qt objects) are skipped and listed. Also stores a pose signature. |
-| `apply_vehicle_state(snap)` | L944 | Writes the saved values straight into each object's `__dict__` (or slots), bypassing read-only properties and custom setters; recomputes the pose signature and returns `(ok, details)`. `ok` is `True` only if the pose matches. |
-| `_all_parts`, `_attr_names`, `_copy_value`, `_pose` | L857–L915 | Internal helpers. |
+| Function | Behaviour |
+|---|---|
+| `capture_vehicle_state(vehicle)` | Deep-copies every attribute of the vehicle and of each part in `vehicle_parts`. References between parts (trailer, parent, `vehicle_parts`) are kept pointing at the **original** objects via a pre-filled copy memo, so shared points stay shared. Un-copyable attributes (locks, some Qt objects) are skipped and listed. Also stores a pose signature. |
+| `apply_vehicle_state(snap)` | Writes the saved values straight into each object's `__dict__` (or slots), bypassing read-only properties and custom setters; recomputes the pose signature and returns `(ok, details)`. `ok` is `True` only if the pose matches. |
+| `_all_parts`, `_attr_names`, `_copy_value`, `_pose` | Internal helpers. |
 
 The plugin calls `capture_vehicle_state` in `_begin_undo_entry()` (just before a run starts) and
 `apply_vehicle_state` in `undo_last_run()`. If `ok` is `False` the message shows exactly which attributes failed.
